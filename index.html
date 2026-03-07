@@ -71,6 +71,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
       gap: 24px;
+      align-items: start; /* cards grow independently on expand */
     }
 
     /* ── Card ── */
@@ -265,6 +266,23 @@
       letter-spacing: 0.02em;
     }
 
+    /* ── Bars toggle ── */
+    .bars-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.72rem;
+      color: #94a3b8;
+      padding: 6px 0 2px;
+      display: block;
+      text-decoration: underline;
+      text-decoration-style: dotted;
+      text-decoration-color: #cbd5e1;
+      text-underline-offset: 2px;
+    }
+
+    .bars-toggle:hover { color: #475569; }
+
     /* ── Skeleton loading ── */
     .loading-state {
       padding: 40px 24px;
@@ -373,7 +391,7 @@
 </main>
 
 <footer>
-  Data sourced from <a href="https://kalshi.com" target="_blank" rel="noopener">Kalshi</a> prediction markets, collected twice daily.
+  Data sourced from <a href="https://kalshi.com" target="_blank" rel="noopener">Kalshi</a> prediction markets, collected multiple times daily.
   Methodology based on Diercks, Katz &amp; Wright (2026), Federal Reserve Working Paper.
 </footer>
 
@@ -677,10 +695,12 @@
       return '<p style="color:#94a3b8;font-size:0.8rem;">No contract data available.</p>';
     }
 
-    const maxProb = Math.max(...bars.map(b => b.prob), 0.001);
+    const maxProb     = Math.max(...bars.map(b => b.prob), 0.001);
+    const visibleBars = bars.filter(b => b.prob >= 0.02);
+    const hiddenBars  = bars.filter(b => b.prob <  0.02);
 
-    return bars.map(bar => {
-      const widthPct  = ((bar.prob / maxProb) * 100).toFixed(1);
+    function barHtml(bar) {
+      const widthPct   = ((bar.prob / maxProb) * 100).toFixed(1);
       const displayPct = (bar.prob * 100).toFixed(1);
       return `
         <div class="bar-row">
@@ -692,7 +712,22 @@
             <div class="bar-fill" style="width:${widthPct}%;background:${market.barColor};"></div>
           </div>
         </div>`;
-    }).join('');
+    }
+
+    const visibleHtml = visibleBars.length
+      ? visibleBars.map(barHtml).join('')
+      : '<p style="color:#94a3b8;font-size:0.8rem;">No contract data available.</p>';
+
+    if (!hiddenBars.length) return visibleHtml;
+
+    const toggleLabel = `Show ${hiddenBars.length} more (< 2%)`;
+    return `
+      ${visibleHtml}
+      <div class="bars-extra" style="display:none;">
+        ${hiddenBars.map(barHtml).join('')}
+      </div>
+      <button class="bars-toggle" data-label="${toggleLabel}"
+              onclick="toggleHiddenBars(this)">${toggleLabel}</button>`;
   }
 
   function renderCard(market, summaryRec, contractRecs, history) {
@@ -784,6 +819,16 @@
           </div>
         </div>
       </div>`;
+  }
+
+  /* ────────────────────────────────────────────
+     Interactive handlers
+  ──────────────────────────────────────────── */
+  function toggleHiddenBars(btn) {
+    const extra    = btn.previousElementSibling; // .bars-extra
+    const isHidden = extra.style.display === 'none';
+    extra.style.display = isHidden ? 'block' : 'none';
+    btn.textContent     = isHidden ? 'Show less' : btn.dataset.label;
   }
 
   /* ────────────────────────────────────────────
