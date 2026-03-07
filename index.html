@@ -220,6 +220,51 @@
       transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
+    /* ── Delta badge ── */
+    .delta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .delta-age {
+      font-weight: 400;
+      color: #94a3b8;
+    }
+
+    .delta-up   { color: #16a34a; }
+    .delta-down { color: #dc2626; }
+    .delta-flat { color: #94a3b8; }
+
+    /* ── Sparkline section ── */
+    .card-sparkline {
+      padding: 12px 24px 4px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .sparkline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .sparkline-axis {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      padding-bottom: 10px;
+    }
+
+    .sparkline-axis-label {
+      font-size: 0.62rem;
+      color: #cbd5e1;
+      letter-spacing: 0.02em;
+    }
+
     /* ── Skeleton loading ── */
     .loading-state {
       padding: 40px 24px;
@@ -452,6 +497,130 @@
   }
 
   /* ────────────────────────────────────────────
+     Historical helpers
+  ──────────────────────────────────────────── */
+
+  /**
+   * Return sorted, deduplicated summary records for a market,
+   * newest last, up to `limit` readings.
+   */
+  function getHistory(summaryRecords, marketKey, limit = 10) {
+    const filtered = summaryRecords
+      .filter(r => r.fields.market_type === marketKey && r.fields.implied_mean != null)
+      .sort((a, b) => a.fields.timestamp.localeCompare(b.fields.timestamp));
+
+    // One entry per timestamp (guard against duplicate rows)
+    const seen = new Set();
+    const deduped = filtered.filter(r => {
+      if (seen.has(r.fields.timestamp)) return false;
+      seen.add(r.fields.timestamp);
+      return true;
+    });
+
+    return deduped.slice(-limit);
+  }
+
+  /** Render the delta badge comparing the two most-recent history readings. */
+  function buildDeltaHtml(history, market) {
+    if (history.length < 2) {
+      return '<span class="stat-sub">Market consensus</span>';
+    }
+
+    const curr   = history[history.length - 1].fields.implied_mean;
+    const prev   = history[history.length - 2].fields.implied_mean;
+    const prevTs = history[history.length - 2].fields.timestamp;
+    const currTs = history[history.length - 1].fields.timestamp;
+
+    if (curr == null || prev == null) {
+      return '<span class="stat-sub">Market consensus</span>';
+    }
+
+    const delta  = curr - prev;
+    const diffH  = Math.round((new Date(currTs) - new Date(prevTs)) / 3600000);
+    const ageLabel = diffH < 24 ? `${diffH}h ago` : `${Math.round(diffH / 24)}d ago`;
+
+    const isFlat = market.unit === '%'
+      ? Math.abs(delta) < 0.005
+      : Math.abs(delta) < 0.5;
+
+    if (isFlat) {
+      return `<span class="delta-badge delta-flat">→ Unchanged <span class="delta-age">vs ${ageLabel}</span></span>`;
+    }
+
+    const arrow = delta > 0 ? '▲' : '▼';
+    const cls   = delta > 0 ? 'delta-up' : 'delta-down';
+    const sign  = delta > 0 ? '+' : '';
+    const fmt   = market.unit === '%'
+      ? `${sign}${delta.toFixed(2)}%`
+      : `${sign}${Math.round(delta)} bps`;
+
+    return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
+  }
+
+  /** Render a mini area sparkline SVG from history. */
+  function buildSparklineHtml(history, market) {
+    if (history.length < 2) return '';
+
+    const values = history.map(r => r.fields.implied_mean);
+    const W = 400, H = 48, padX = 4, padY = 6;
+
+    const minVal = Math.min(...values);
+    const maxVal = Math.max(...values);
+    const range  = maxVal - minVal || 0.001;
+
+    const pts = values.map((v, i) => ({
+      x: padX + (i / (values.length - 1)) * (W - 2 * padX),
+      y: H - padY - ((v - minVal) / range) * (H - 2 * padY),
+    }));
+
+    const linePoints = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const areaPath   = [
+      `M ${pts[0].x.toFixed(1)},${H}`,
+      `L ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`,
+      pts.slice(1).map(p => `L ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
+      `L ${pts[pts.length - 1].x.toFixed(1)},${H} Z`,
+    ].join(' ');
+
+    const gradId = `grad-${market.key.toLowerCase().replace('_', '-')}`;
+    const color  = market.barColor;
+
+    const dots = pts.map((p, i) => {
+      const last = i === pts.length - 1;
+      return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.8}" fill="${color}" opacity="${last ? 1 : 0.45}"/>`;
+    }).join('');
+
+    return `
+      <svg width="100%" height="48" viewBox="0 0 ${W} ${H}"
+           preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="${color}" stop-opacity="0.18"/>
+            <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaPath}" fill="url(#${gradId})"/>
+        <polyline points="${linePoints}" fill="none" stroke="${color}"
+                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        ${dots}
+      </svg>`;
+  }
+
+  /** Render the date-range axis labels below the sparkline. */
+  function buildSparklineAxisHtml(history) {
+    if (history.length < 2) return '';
+    const fmt = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const first = history[0].fields.timestamp;
+    const last  = history[history.length - 1].fields.timestamp;
+    const n     = history.length;
+    return `
+      <div class="sparkline-axis">
+        <span class="sparkline-axis-label">${fmt(first)}</span>
+        <span class="sparkline-axis-label">${n} reading${n !== 1 ? 's' : ''}</span>
+        <span class="sparkline-axis-label">${fmt(last)}</span>
+      </div>`;
+  }
+
+  /* ────────────────────────────────────────────
      Bar chart builder
   ──────────────────────────────────────────── */
   function buildBars(contractRecords, market) {
@@ -526,18 +695,30 @@
     }).join('');
   }
 
-  function renderCard(market, summaryRec, contractRecs) {
+  function renderCard(market, summaryRec, contractRecs, history) {
     const f = summaryRec ? summaryRec.fields : {};
     const impliedMean    = f.implied_mean;
     const daysToEvent    = f.days_to_event;
     const contractSeries = f.contract_series || '—';
 
-    const bars    = buildBars(contractRecs, market);
-    const barsHtml = renderBarsHtml(bars, market);
+    const bars       = buildBars(contractRecs, market);
+    const barsHtml   = renderBarsHtml(bars, market);
+    const deltaHtml  = buildDeltaHtml(history, market);
+    const sparkHtml  = buildSparklineHtml(history, market);
+    const axisHtml   = buildSparklineAxisHtml(history);
 
     const chartNote = market.cumulative
       ? 'Probability distribution (derived from cumulative contracts)'
       : 'Outcome probabilities';
+
+    const sparklineSection = history.length >= 2 ? `
+        <div class="card-sparkline">
+          <div class="sparkline-header">
+            <span class="chart-title">Implied mean trend</span>
+          </div>
+          ${sparkHtml}
+          ${axisHtml}
+        </div>` : '';
 
     return `
       <div class="card">
@@ -551,7 +732,7 @@
           <div class="stat">
             <span class="stat-label">Implied Mean</span>
             <span class="stat-value ${market.colorClass}">${formatMean(impliedMean, market.unit)}</span>
-            <span class="stat-sub">Market consensus</span>
+            ${deltaHtml}
           </div>
           <div class="stat">
             <span class="stat-label">Days to Event</span>
@@ -559,6 +740,8 @@
             <span class="stat-sub">${market.eventLabel}</span>
           </div>
         </div>
+
+        ${sparklineSection}
 
         <div class="card-chart">
           <div class="chart-title">${chartNote}</div>
@@ -645,7 +828,8 @@
       try {
         const summaryLatest   = latestForMarket(summaryRecords, market.key);
         const contractsLatest = latestForMarket(contractRecords, market.key);
-        return renderCard(market, summaryLatest[0] || null, contractsLatest);
+        const history         = getHistory(summaryRecords, market.key);
+        return renderCard(market, summaryLatest[0] || null, contractsLatest, history);
       } catch (err) {
         console.error(`Error rendering card for ${market.key}:`, err);
         return renderErrorCard(market, err.message);
