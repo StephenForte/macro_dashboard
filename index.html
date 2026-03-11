@@ -555,15 +555,27 @@
     return `${mon} ${yr} FOMC`;
   }
 
-  /** Map a numeric FF Rate strike to a descriptive bucket label. */
+  /** Map an FF Rate strike to a descriptive bucket label. */
   function ffRateLabel(strike) {
+    // Null / empty → treat as hold
+    if (strike == null || strike === '') return 'Hold Rates';
+
     const bps = Number(strike);
-    if      (bps < -25)  return 'Cut >25 bps';
-    else if (bps === -25) return 'Cut 25 bps';
-    else if (bps === 0)   return 'Maintain';
-    else if (bps === 25)  return 'Hike 25 bps';
-    else if (bps > 25)   return 'Hike >25 bps';
-    return `${bps >= 0 ? '+' : ''}${bps} bps`;
+    if (!isNaN(bps)) {
+      if (bps < -25)   return 'Cut >25 bps';
+      if (bps === -25) return 'Cut 25 bps';
+      if (bps === 0)   return 'Hold Rates';
+      if (bps === 25)  return 'Hike 25 bps';
+      if (bps > 25)    return 'Hike >25 bps';
+      return `${bps > 0 ? '+' : ''}${bps} bps`;
+    }
+
+    // Non-numeric string strikes (e.g. Kalshi labels like "NC", "CUT25", "HIKE25")
+    const s = String(strike).toUpperCase().replace(/[-_\s]/g, '');
+    if (s === 'NC' || s.includes('HOLD') || s.includes('UNCHANGED') || s.includes('NOCHANGE')) return 'Hold Rates';
+    const cutM  = s.match(/CUT(\d+)/);  if (cutM)  { const n = +cutM[1];  return n > 25 ? `Cut >${n} bps`  : `Cut ${n} bps`;  }
+    const hikeM = s.match(/HIKE(\d+)/); if (hikeM) { const n = +hikeM[1]; return n > 25 ? `Hike >${n} bps` : `Hike ${n} bps`; }
+    return String(strike); // last resort: display raw value
   }
 
   /**
