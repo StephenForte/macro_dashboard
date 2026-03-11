@@ -433,13 +433,13 @@
     },
     Recession: {
       name: 'Recession Probability', eventLabel: 'NBER Declaration',
-      unit: '%', barColor: '#dc2626',
+      unit: '%', meanType: 'modal_prob', barColor: '#dc2626',
       badgeClass: 'badge-recession', colorClass: 'color-recession',
       multiSeries: false,
     },
     FF_Rate: {
       name: 'Fed Funds Rate', eventLabel: 'FOMC Meeting',
-      unit: 'bps', barColor: '#d97706',
+      unit: '%', meanType: 'modal_prob', barColor: '#d97706',
       badgeClass: 'badge-ff_rate', colorClass: 'color-ff_rate',
       multiSeries: true,
     },
@@ -518,10 +518,10 @@
   }
 
   /** Format implied mean for display. */
-  function formatMean(value, unit) {
+  function formatMean(value, unit, meanType) {
     if (value === undefined || value === null) return '—';
-    if (unit === '%')   return `${value.toFixed(2)}%`;
-    if (unit === 'bps') return `${value > 0 ? '+' : ''}${Math.round(value)} bps`;
+    if (meanType === 'modal_prob') return `${(value * 100).toFixed(1)}%`;
+    if (unit === '%') return `${value.toFixed(2)}%`;
     return value.toFixed(2);
   }
 
@@ -594,7 +594,7 @@
     const delta    = curr - prev;
     const diffH    = Math.round((new Date(currTs) - new Date(prevTs)) / 3600000);
     const ageLabel = diffH < 24 ? `${diffH}h ago` : `${Math.round(diffH / 24)}d ago`;
-    const isFlat   = unit.config.unit === '%' ? Math.abs(delta) < 0.005 : Math.abs(delta) < 0.5;
+    const isFlat   = Math.abs(delta) < 0.005;
 
     if (isFlat) {
       return `<span class="delta-badge delta-flat">→ Unchanged <span class="delta-age">vs ${ageLabel}</span></span>`;
@@ -602,9 +602,9 @@
     const arrow = delta > 0 ? '▲' : '▼';
     const cls   = delta > 0 ? 'delta-up' : 'delta-down';
     const sign  = delta > 0 ? '+' : '';
-    const fmt   = unit.config.unit === '%'
-      ? `${sign}${delta.toFixed(2)}%`
-      : `${sign}${Math.round(delta)} bps`;
+    const fmt   = unit.config.meanType === 'modal_prob'
+      ? `${sign}${(delta * 100).toFixed(1)}pp`
+      : `${sign}${delta.toFixed(2)}%`;
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
 
@@ -800,8 +800,8 @@
 
         <div class="card-stats">
           <div class="stat">
-            <span class="stat-label">Implied Mean</span>
-            <span class="stat-value ${unit.config.colorClass}">${formatMean(impliedMean, unit.config.unit)}</span>
+            <span class="stat-label">${unit.config.meanType === 'modal_prob' ? 'Modal probability' : 'Implied Mean'}</span>
+            <span class="stat-value ${unit.config.colorClass}">${formatMean(impliedMean, unit.config.unit, unit.config.meanType)}</span>
             ${noData ? '<span class="stat-sub">No data yet</span>' : deltaHtml}
           </div>
           <div class="stat">
