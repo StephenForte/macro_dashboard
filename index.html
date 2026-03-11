@@ -566,6 +566,24 @@
     return `${bps >= 0 ? '+' : ''}${bps} bps`;
   }
 
+  /**
+   * Return the label of the most likely (modal) outcome from contract records.
+   * Used to annotate the "Modal probability" stat with the actual outcome name.
+   */
+  function getModalOutcomeLabel(contractRecs, unit) {
+    if (!contractRecs.length) return null;
+    const sorted = [...contractRecs].sort((a, b) => Number(a.fields.strike) - Number(b.fields.strike));
+    let bestIdx = 0, bestProb = -1;
+    sorted.forEach((r, i) => {
+      const p = Number(r.fields.implied_probability) || 0;
+      if (p > bestProb) { bestProb = p; bestIdx = i; }
+    });
+    const modal = sorted[bestIdx];
+    if (unit.marketType === 'FF_Rate')   return ffRateLabel(modal.fields.strike);
+    if (unit.marketType === 'Recession') return RECESSION_QUARTERS[bestIdx] || `Quarter ${bestIdx + 1}`;
+    return String(modal.fields.strike);
+  }
+
   /* ────────────────────────────────────────────
      Historical helpers
   ──────────────────────────────────────────── */
@@ -773,6 +791,10 @@
     const deltaHtml = buildDeltaHtml(history, unit);
     const sparkHtml = buildSparklineHtml(history, unit);
     const axisHtml  = buildSparklineAxisHtml(history);
+    const modalLabel = unit.config.meanType === 'modal_prob'
+      ? getModalOutcomeLabel(contractRecs, unit)
+      : null;
+    const meanLabel = modalLabel ? `P(${modalLabel})` : (unit.config.meanType === 'modal_prob' ? 'Modal probability' : 'Implied Mean');
 
     const strikeStructure = contractRecs[0]?.fields?.strike_structure;
     const chartNote = strikeStructure === 'cumulative'
@@ -800,7 +822,7 @@
 
         <div class="card-stats">
           <div class="stat">
-            <span class="stat-label">${unit.config.meanType === 'modal_prob' ? 'Modal probability' : 'Implied Mean'}</span>
+            <span class="stat-label">${meanLabel}</span>
             <span class="stat-value ${unit.config.colorClass}">${formatMean(impliedMean, unit.config.unit, unit.config.meanType)}</span>
             ${noData ? '<span class="stat-sub">No data yet</span>' : deltaHtml}
           </div>
