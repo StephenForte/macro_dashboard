@@ -100,9 +100,11 @@
       margin-bottom: 10px;
     }
 
-    .badge-cpi     { background: #dbeafe; color: #1d4ed8; }
-    .badge-gdp     { background: #d1fae5; color: #065f46; }
-    .badge-ff_rate { background: #fef3c7; color: #92400e; }
+    .badge-cpi        { background: #dbeafe; color: #1d4ed8; }
+    .badge-core_cpi_mom { background: #ede9fe; color: #5b21b6; }
+    .badge-gdp        { background: #d1fae5; color: #065f46; }
+    .badge-recession  { background: #fee2e2; color: #991b1b; }
+    .badge-ff_rate    { background: #fef3c7; color: #92400e; }
 
     .card-title {
       font-size: 1.05rem;
@@ -154,9 +156,11 @@
       letter-spacing: -0.02em;
     }
 
-    .stat-value.color-cpi     { color: #2563eb; }
-    .stat-value.color-gdp     { color: #059669; }
-    .stat-value.color-ff_rate { color: #d97706; }
+    .stat-value.color-cpi         { color: #2563eb; }
+    .stat-value.color-core_cpi_mom { color: #7c3aed; }
+    .stat-value.color-gdp         { color: #059669; }
+    .stat-value.color-recession   { color: #dc2626; }
+    .stat-value.color-ff_rate     { color: #d97706; }
 
     .stat-sub {
       font-size: 0.72rem;
@@ -402,40 +406,47 @@
   ──────────────────────────────────────────── */
   const AT_BASE_ID = 'app2uFgJfDU42ZKOm';
   // AT_API_KEY is injected via config.js (loaded before this script)
-  const AT_BASE    = `https://api.airtable.com/v0/${AT_BASE_ID}`;
+  const AT_BASE = `https://api.airtable.com/v0/${AT_BASE_ID}`;
 
-  const MARKETS = [
-    {
-      key:          'CPI',
-      name:         'CPI Year-over-Year',
-      eventLabel:   'CPI Release',
-      unit:         '%',
-      barColor:     '#2563eb',
-      badgeClass:   'badge-cpi',
-      colorClass:   'color-cpi',
-      cumulative:   true,   // contracts are P(outcome ≤ strike)
+  // Ordered display config keyed by market_type.
+  // FF_Rate uses multiSeries:true → one card per contract_series.
+  // strike_structure ('cumulative'|'mutually_exclusive') is read from
+  // the data at runtime; no hardcoded boolean needed here.
+  const MARKET_CONFIG = {
+    CPI: {
+      name: 'CPI Year-over-Year', eventLabel: 'CPI Release',
+      unit: '%', barColor: '#2563eb',
+      badgeClass: 'badge-cpi', colorClass: 'color-cpi',
+      multiSeries: false,
     },
-    {
-      key:          'GDP',
-      name:         'GDP Growth',
-      eventLabel:   'Q1 Advance Estimate',
-      unit:         '%',
-      barColor:     '#059669',
-      badgeClass:   'badge-gdp',
-      colorClass:   'color-gdp',
-      cumulative:   true,
+    Core_CPI_MoM: {
+      name: 'Core CPI Month-over-Month', eventLabel: 'CPI Release',
+      unit: '%', barColor: '#7c3aed',
+      badgeClass: 'badge-core_cpi_mom', colorClass: 'color-core_cpi_mom',
+      multiSeries: false,
     },
-    {
-      key:          'FF_Rate',
-      name:         'Federal Funds Rate',
-      eventLabel:   'Next FOMC',
-      unit:         'bps',
-      barColor:     '#d97706',
-      badgeClass:   'badge-ff_rate',
-      colorClass:   'color-ff_rate',
-      cumulative:   false,  // mutually exclusive outcome buckets
+    GDP: {
+      name: 'GDP Growth', eventLabel: 'Q1 Advance Estimate',
+      unit: '%', barColor: '#059669',
+      badgeClass: 'badge-gdp', colorClass: 'color-gdp',
+      multiSeries: false,
     },
-  ];
+    Recession: {
+      name: 'Recession Probability', eventLabel: 'NBER Declaration',
+      unit: '%', barColor: '#dc2626',
+      badgeClass: 'badge-recession', colorClass: 'color-recession',
+      multiSeries: false,
+    },
+    FF_Rate: {
+      name: 'Fed Funds Rate', eventLabel: 'FOMC Meeting',
+      unit: 'bps', barColor: '#d97706',
+      badgeClass: 'badge-ff_rate', colorClass: 'color-ff_rate',
+      multiSeries: true,
+    },
+  };
+
+  // Quarter labels for Recession bars, mapped by sorted-strike index.
+  const RECESSION_QUARTERS = ['Q4 2024','Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026'];
 
   /* ────────────────────────────────────────────
      Airtable fetching (handles pagination)
@@ -469,14 +480,39 @@
      Data helpers
   ──────────────────────────────────────────── */
 
-  /** Return only the records with the latest timestamp for a given market_type. */
-  function latestForMarket(records, marketKey) {
-    const filtered = records.filter(r => r.fields.market_type === marketKey);
-    if (!filtered.length) return [];
+  /**
+   * Derive ordered display units from summary data.
+   * Most markets → one unit. FF_Rate (multiSeries) → one unit per
+   * contract_series, sorted nearest-first by days_to_event.
+   */
+  function deriveDisplayUnits(summaryRecords) {
+    const units = [];
+    for (const [marketType, config] of Object.entries(MARKET_CONFIG)) {
+      const forMarket = summaryRecords.filter(r => r.fields.market_type === marketType);
+      if (config.multiSeries) {
+        const seriesMap = new Map();
+        for (const r of forMarket) {
+          const s = r.fields.contract_series;
+          const d = Number(r.fields.days_to_event) || Infinity;
+          if (s && (!seriesMap.has(s) || d < seriesMap.get(s))) seriesMap.set(s, d);
+        }
+        [...seriesMap.entries()]
+          .sort((a, b) => a[1] - b[1])
+          .forEach(([series]) => units.push({ marketType, contractSeries: series, config }));
+      } else {
+        units.push({ marketType, contractSeries: null, config });
+      }
+    }
+    return units;
+  }
 
+  /** Latest records for a display unit (market_type + optional contract_series). */
+  function latestForUnit(records, marketType, contractSeries = null) {
+    let filtered = records.filter(r => r.fields.market_type === marketType);
+    if (contractSeries) filtered = filtered.filter(r => r.fields.contract_series === contractSeries);
+    if (!filtered.length) return [];
     const latestTs = filtered.reduce(
-      (max, r) => (r.fields.timestamp > max ? r.fields.timestamp : max),
-      ''
+      (max, r) => (r.fields.timestamp > max ? r.fields.timestamp : max), ''
     );
     return filtered.filter(r => r.fields.timestamp === latestTs);
   }
@@ -486,7 +522,7 @@
     if (value === undefined || value === null) return '—';
     if (unit === '%')   return `${value.toFixed(2)}%`;
     if (unit === 'bps') return `${value > 0 ? '+' : ''}${Math.round(value)} bps`;
-    return String(value);
+    return value.toFixed(2);
   }
 
   /** Format an ISO timestamp into a readable local string. */
@@ -501,96 +537,88 @@
   }
 
   /**
-   * Map a numeric FF Rate strike to a descriptive bucket label.
-   * Kalshi FF Rate buckets are typically in 25 bps increments.
+   * Parse an FF_Rate contract_series into a human-readable FOMC meeting label.
+   * e.g. "KXFFRATE-MAR25" → "March 2025 FOMC"
    */
+  function parseFOMCMeeting(series) {
+    if (!series) return 'FOMC Meeting';
+    const m = series.match(/([A-Z]{3})[-_]?(\d{2,4})$/i)
+           || series.match(/[-_]([A-Z]{3})[-_]?(\d{2,4})/i);
+    if (!m) return series;
+    const MONTHS = {
+      JAN:'January', FEB:'February', MAR:'March',    APR:'April',
+      MAY:'May',     JUN:'June',     JUL:'July',     AUG:'August',
+      SEP:'September', OCT:'October', NOV:'November', DEC:'December',
+    };
+    const mon = MONTHS[m[1].toUpperCase()] || m[1];
+    const yr  = m[2].length === 2 ? `20${m[2]}` : m[2];
+    return `${mon} ${yr} FOMC`;
+  }
+
+  /** Map a numeric FF Rate strike to a descriptive bucket label. */
   function ffRateLabel(strike) {
     const bps = Number(strike);
-    if      (bps < -25) return 'Cut >25 bps';
+    if      (bps < -25)  return 'Cut >25 bps';
     else if (bps === -25) return 'Cut 25 bps';
     else if (bps === 0)   return 'Maintain';
     else if (bps === 25)  return 'Hike 25 bps';
     else if (bps > 25)   return 'Hike >25 bps';
-    else return `${bps >= 0 ? '+' : ''}${bps} bps`;
+    return `${bps >= 0 ? '+' : ''}${bps} bps`;
   }
 
   /* ────────────────────────────────────────────
      Historical helpers
   ──────────────────────────────────────────── */
 
-  /**
-   * Return sorted, deduplicated summary records for a market,
-   * newest last, up to `limit` readings.
-   */
-  function getHistory(summaryRecords, marketKey, limit = 10) {
-    const filtered = summaryRecords
-      .filter(r => r.fields.market_type === marketKey && r.fields.implied_mean != null)
-      .sort((a, b) => a.fields.timestamp.localeCompare(b.fields.timestamp));
-
-    // One entry per timestamp (guard against duplicate rows)
+  /** Sorted, deduplicated history for a display unit (newest last, up to limit). */
+  function getHistory(summaryRecords, marketType, contractSeries = null, limit = 10) {
+    let filtered = summaryRecords
+      .filter(r => r.fields.market_type === marketType && r.fields.implied_mean != null);
+    if (contractSeries) filtered = filtered.filter(r => r.fields.contract_series === contractSeries);
+    filtered.sort((a, b) => a.fields.timestamp.localeCompare(b.fields.timestamp));
     const seen = new Set();
-    const deduped = filtered.filter(r => {
-      if (seen.has(r.fields.timestamp)) return false;
-      seen.add(r.fields.timestamp);
-      return true;
-    });
-
-    return deduped.slice(-limit);
+    return filtered
+      .filter(r => { if (seen.has(r.fields.timestamp)) return false; seen.add(r.fields.timestamp); return true; })
+      .slice(-limit);
   }
 
-  /** Render the delta badge comparing the two most-recent history readings. */
-  function buildDeltaHtml(history, market) {
-    if (history.length < 2) {
-      return '<span class="stat-sub">Market consensus</span>';
-    }
-
+  /** Delta badge comparing the two most-recent history readings. */
+  function buildDeltaHtml(history, unit) {
+    if (history.length < 2) return '<span class="stat-sub">Market consensus</span>';
     const curr   = history[history.length - 1].fields.implied_mean;
     const prev   = history[history.length - 2].fields.implied_mean;
     const prevTs = history[history.length - 2].fields.timestamp;
     const currTs = history[history.length - 1].fields.timestamp;
+    if (curr == null || prev == null) return '<span class="stat-sub">Market consensus</span>';
 
-    if (curr == null || prev == null) {
-      return '<span class="stat-sub">Market consensus</span>';
-    }
-
-    const delta  = curr - prev;
-    const diffH  = Math.round((new Date(currTs) - new Date(prevTs)) / 3600000);
+    const delta    = curr - prev;
+    const diffH    = Math.round((new Date(currTs) - new Date(prevTs)) / 3600000);
     const ageLabel = diffH < 24 ? `${diffH}h ago` : `${Math.round(diffH / 24)}d ago`;
-
-    const isFlat = market.unit === '%'
-      ? Math.abs(delta) < 0.005
-      : Math.abs(delta) < 0.5;
+    const isFlat   = unit.config.unit === '%' ? Math.abs(delta) < 0.005 : Math.abs(delta) < 0.5;
 
     if (isFlat) {
       return `<span class="delta-badge delta-flat">→ Unchanged <span class="delta-age">vs ${ageLabel}</span></span>`;
     }
-
     const arrow = delta > 0 ? '▲' : '▼';
     const cls   = delta > 0 ? 'delta-up' : 'delta-down';
     const sign  = delta > 0 ? '+' : '';
-    const fmt   = market.unit === '%'
+    const fmt   = unit.config.unit === '%'
       ? `${sign}${delta.toFixed(2)}%`
       : `${sign}${Math.round(delta)} bps`;
-
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
 
-  /** Render a mini area sparkline SVG from history. */
-  function buildSparklineHtml(history, market) {
+  /** Mini area sparkline SVG from history. */
+  function buildSparklineHtml(history, unit) {
     if (history.length < 2) return '';
-
     const values = history.map(r => r.fields.implied_mean);
     const W = 400, H = 48, padX = 4, padY = 6;
-
-    const minVal = Math.min(...values);
-    const maxVal = Math.max(...values);
+    const minVal = Math.min(...values), maxVal = Math.max(...values);
     const range  = maxVal - minVal || 0.001;
-
     const pts = values.map((v, i) => ({
       x: padX + (i / (values.length - 1)) * (W - 2 * padX),
       y: H - padY - ((v - minVal) / range) * (H - 2 * padY),
     }));
-
     const linePoints = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
     const areaPath   = [
       `M ${pts[0].x.toFixed(1)},${H}`,
@@ -598,15 +626,12 @@
       pts.slice(1).map(p => `L ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
       `L ${pts[pts.length - 1].x.toFixed(1)},${H} Z`,
     ].join(' ');
-
-    const gradId = `grad-${market.key.toLowerCase().replace('_', '-')}`;
-    const color  = market.barColor;
-
+    const color  = unit.config.barColor;
+    const gradId = `grad-${unit.marketType}-${(unit.contractSeries || '').slice(-5)}`.replace(/[^a-z0-9-]/gi, '-');
     const dots = pts.map((p, i) => {
       const last = i === pts.length - 1;
       return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.8}" fill="${color}" opacity="${last ? 1 : 0.45}"/>`;
     }).join('');
-
     return `
       <svg width="100%" height="48" viewBox="0 0 ${W} ${H}"
            preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -623,10 +648,10 @@
       </svg>`;
   }
 
-  /** Render the date-range axis labels below the sparkline. */
+  /** Date-range axis labels below sparkline. */
   function buildSparklineAxisHtml(history) {
     if (history.length < 2) return '';
-    const fmt = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const fmt   = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const first = history[0].fields.timestamp;
     const last  = history[history.length - 1].fields.timestamp;
     const n     = history.length;
@@ -641,60 +666,61 @@
   /* ────────────────────────────────────────────
      Bar chart builder
   ──────────────────────────────────────────── */
-  function buildBars(contractRecords, market) {
+  function buildBars(contractRecords, unit) {
     if (!contractRecords.length) return null;
 
-    // Sort by numeric strike ascending
     const sorted = [...contractRecords].sort(
       (a, b) => Number(a.fields.strike) - Number(b.fields.strike)
     );
 
-    let bars;
+    // Read strike_structure from the data (new field); default to mutually_exclusive
+    const strikeStructure = sorted[0]?.fields?.strike_structure || 'mutually_exclusive';
 
-    if (market.cumulative) {
-      // Convert cumulative probabilities → marginal (bucket) probabilities
-      bars = sorted.map((r, i) => {
+    if (strikeStructure === 'cumulative') {
+      const bars = sorted.map((r, i) => {
         const cum  = Number(r.fields.implied_probability) || 0;
         const prev = i > 0 ? (Number(sorted[i - 1].fields.implied_probability) || 0) : 0;
         const prob = Math.max(0, cum - prev);
-
-        const lo = i > 0 ? Number(sorted[i - 1].fields.strike) : null;
-        const hi = Number(r.fields.strike);
-        const label = lo === null
-          ? `≤ ${hi}${market.unit}`
-          : `${lo}–${hi}${market.unit}`;
-
-        return { label, prob };
+        const lo   = i > 0 ? Number(sorted[i - 1].fields.strike) : null;
+        const hi   = Number(r.fields.strike);
+        return {
+          label: lo === null ? `≤ ${hi}${unit.config.unit}` : `${lo}–${hi}${unit.config.unit}`,
+          prob,
+        };
       });
-
-      // Tail: P(> highest strike)
-      const topCum = Number(sorted[sorted.length - 1].fields.implied_probability) || 0;
+      const topCum   = Number(sorted[sorted.length - 1].fields.implied_probability) || 0;
       const tailProb = Math.max(0, 1 - topCum);
       if (tailProb > 0.001) {
         bars.push({
-          label: `> ${Number(sorted[sorted.length - 1].fields.strike)}${market.unit}`,
+          label: `> ${Number(sorted[sorted.length - 1].fields.strike)}${unit.config.unit}`,
           prob:  tailProb,
         });
       }
-    } else {
-      // FF Rate: mutually exclusive buckets, use as-is
-      bars = sorted.map(r => ({
-        label: ffRateLabel(r.fields.strike),
-        prob:  Math.max(0, Number(r.fields.implied_probability) || 0),
-      }));
+      return bars;
     }
 
-    return bars;
+    // Mutually exclusive — label depends on market type
+    return sorted.map((r, i) => {
+      const prob = Math.max(0, Number(r.fields.implied_probability) || 0);
+      let label;
+      if (unit.marketType === 'Recession') {
+        label = RECESSION_QUARTERS[i] || `Quarter ${i + 1}`;
+      } else if (unit.marketType === 'FF_Rate') {
+        label = ffRateLabel(r.fields.strike);
+      } else {
+        label = String(r.fields.strike);
+      }
+      return { label, prob };
+    });
   }
 
   /* ────────────────────────────────────────────
      HTML rendering
   ──────────────────────────────────────────── */
-  function renderBarsHtml(bars, market) {
+  function renderBarsHtml(bars, unit) {
     if (!bars || !bars.length) {
       return '<p style="color:#94a3b8;font-size:0.8rem;">No contract data available.</p>';
     }
-
     const maxProb     = Math.max(...bars.map(b => b.prob), 0.001);
     const visibleBars = bars.filter(b => b.prob >= 0.02);
     const hiddenBars  = bars.filter(b => b.prob <  0.02);
@@ -709,14 +735,14 @@
             <span class="bar-pct-text">${displayPct}%</span>
           </div>
           <div class="bar-track">
-            <div class="bar-fill" style="width:${widthPct}%;background:${market.barColor};"></div>
+            <div class="bar-fill" style="width:${widthPct}%;background:${unit.config.barColor};"></div>
           </div>
         </div>`;
     }
 
     const visibleHtml = visibleBars.length
       ? visibleBars.map(barHtml).join('')
-      : '<p style="color:#94a3b8;font-size:0.8rem;">No contract data available.</p>';
+      : '<p style="color:#94a3b8;font-size:0.8rem;">No significant probability bars.</p>';
 
     if (!hiddenBars.length) return visibleHtml;
 
@@ -730,19 +756,26 @@
               onclick="toggleHiddenBars(this)">${toggleLabel}</button>`;
   }
 
-  function renderCard(market, summaryRec, contractRecs, history) {
-    const f = summaryRec ? summaryRec.fields : {};
+  function renderCard(unit, summaryRec, contractRecs, history) {
+    const f              = summaryRec ? summaryRec.fields : {};
     const impliedMean    = f.implied_mean;
     const daysToEvent    = f.days_to_event;
-    const contractSeries = f.contract_series || '—';
+    const contractSeries = f.contract_series || unit.contractSeries || '—';
+    const noData         = !summaryRec && !contractRecs.length;
 
-    const bars       = buildBars(contractRecs, market);
-    const barsHtml   = renderBarsHtml(bars, market);
-    const deltaHtml  = buildDeltaHtml(history, market);
-    const sparkHtml  = buildSparklineHtml(history, market);
-    const axisHtml   = buildSparklineAxisHtml(history);
+    // For FF_Rate multi-series, derive per-card event label from contract_series
+    const eventLabel = (unit.marketType === 'FF_Rate' && unit.contractSeries)
+      ? parseFOMCMeeting(unit.contractSeries)
+      : unit.config.eventLabel;
 
-    const chartNote = market.cumulative
+    const bars      = buildBars(contractRecs, unit);
+    const barsHtml  = renderBarsHtml(bars, unit);
+    const deltaHtml = buildDeltaHtml(history, unit);
+    const sparkHtml = buildSparklineHtml(history, unit);
+    const axisHtml  = buildSparklineAxisHtml(history);
+
+    const strikeStructure = contractRecs[0]?.fields?.strike_structure;
+    const chartNote = strikeStructure === 'cumulative'
       ? 'Probability distribution (derived from cumulative contracts)'
       : 'Outcome probabilities';
 
@@ -755,42 +788,46 @@
           ${axisHtml}
         </div>` : '';
 
+    const badgeLabel = unit.marketType.replace(/_/g, ' ');
+
     return `
       <div class="card">
         <div class="card-header">
-          <span class="market-badge ${market.badgeClass}">${market.key.replace('_', ' ')}</span>
-          <div class="card-title">${market.name}</div>
+          <span class="market-badge ${unit.config.badgeClass}">${badgeLabel}</span>
+          <div class="card-title">${unit.config.name}</div>
           <div class="contract-series">${contractSeries}</div>
         </div>
 
         <div class="card-stats">
           <div class="stat">
             <span class="stat-label">Implied Mean</span>
-            <span class="stat-value ${market.colorClass}">${formatMean(impliedMean, market.unit)}</span>
-            ${deltaHtml}
+            <span class="stat-value ${unit.config.colorClass}">${formatMean(impliedMean, unit.config.unit)}</span>
+            ${noData ? '<span class="stat-sub">No data yet</span>' : deltaHtml}
           </div>
           <div class="stat">
             <span class="stat-label">Days to Event</span>
             <span class="stat-value">${daysToEvent ?? '—'}</span>
-            <span class="stat-sub">${market.eventLabel}</span>
+            <span class="stat-sub">${eventLabel}</span>
           </div>
         </div>
 
-        ${sparklineSection}
+        ${noData ? '' : sparklineSection}
 
         <div class="card-chart">
           <div class="chart-title">${chartNote}</div>
-          ${barsHtml}
+          ${noData
+            ? '<p style="color:#94a3b8;font-size:0.8rem;font-style:italic;">Data collection in progress.</p>'
+            : barsHtml}
         </div>
       </div>`;
   }
 
-  function renderLoadingCard(market) {
+  function renderLoadingCard(unit) {
     return `
       <div class="card">
         <div class="card-header">
-          <span class="market-badge ${market.badgeClass}">${market.key.replace('_', ' ')}</span>
-          <div class="card-title">${market.name}</div>
+          <span class="market-badge ${unit.config.badgeClass}">${unit.marketType.replace(/_/g, ' ')}</span>
+          <div class="card-title">${unit.config.name}</div>
         </div>
         <div class="loading-state">
           <div class="skeleton" style="height:14px;width:40%;"></div>
@@ -804,12 +841,12 @@
       </div>`;
   }
 
-  function renderErrorCard(market, message) {
+  function renderErrorCard(unit, message) {
     return `
       <div class="card">
         <div class="card-header">
-          <span class="market-badge ${market.badgeClass}">${market.key.replace('_', ' ')}</span>
-          <div class="card-title">${market.name}</div>
+          <span class="market-badge ${unit.config.badgeClass}">${unit.marketType.replace(/_/g, ' ')}</span>
+          <div class="card-title">${unit.config.name}</div>
         </div>
         <div class="error-state">
           <div class="error-icon">⚠</div>
@@ -825,7 +862,7 @@
      Interactive handlers
   ──────────────────────────────────────────── */
   function toggleHiddenBars(btn) {
-    const extra    = btn.previousElementSibling; // .bars-extra
+    const extra    = btn.previousElementSibling;
     const isHidden = extra.style.display === 'none';
     extra.style.display = isHidden ? 'block' : 'none';
     btn.textContent     = isHidden ? 'Show less' : btn.dataset.label;
@@ -845,11 +882,13 @@
       return;
     }
 
-    // Show skeleton loading cards immediately
-    grid.innerHTML = MARKETS.map(m => renderLoadingCard(m)).join('');
+    // Show one loading card per known market type while data loads
+    const placeholders = Object.entries(MARKET_CONFIG).map(([marketType, config]) => ({
+      marketType, contractSeries: null, config,
+    }));
+    grid.innerHTML = placeholders.map(u => renderLoadingCard(u)).join('');
 
     let summaryRecords, contractRecords;
-
     try {
       [summaryRecords, contractRecords] = await Promise.all([
         fetchAllRecords('Dashboard_Summary'),
@@ -857,27 +896,28 @@
       ]);
     } catch (err) {
       console.error('Airtable fetch failed:', err);
-      grid.innerHTML = MARKETS.map(m => renderErrorCard(m, err.message)).join('');
+      grid.innerHTML = placeholders.map(u => renderErrorCard(u, err.message)).join('');
       return;
     }
 
-    // Derive global last-updated from the latest timestamp across all summary records
+    // Global last-updated
     const latestTs = summaryRecords.reduce(
-      (max, r) => (r.fields.timestamp > max ? r.fields.timestamp : max),
-      ''
+      (max, r) => (r.fields.timestamp > max ? r.fields.timestamp : max), ''
     );
     document.getElementById('last-updated').textContent = formatTimestamp(latestTs);
 
-    // Render each card
-    grid.innerHTML = MARKETS.map(market => {
+    // Derive display units from data (expands FF_Rate into one card per series)
+    const displayUnits = deriveDisplayUnits(summaryRecords);
+
+    grid.innerHTML = displayUnits.map(unit => {
       try {
-        const summaryLatest   = latestForMarket(summaryRecords, market.key);
-        const contractsLatest = latestForMarket(contractRecords, market.key);
-        const history         = getHistory(summaryRecords, market.key);
-        return renderCard(market, summaryLatest[0] || null, contractsLatest, history);
+        const summaryLatest   = latestForUnit(summaryRecords, unit.marketType, unit.contractSeries);
+        const contractsLatest = latestForUnit(contractRecords, unit.marketType, unit.contractSeries);
+        const history         = getHistory(summaryRecords, unit.marketType, unit.contractSeries);
+        return renderCard(unit, summaryLatest[0] || null, contractsLatest, history);
       } catch (err) {
-        console.error(`Error rendering card for ${market.key}:`, err);
-        return renderErrorCard(market, err.message);
+        console.error(`Error rendering ${unit.marketType}:`, err);
+        return renderErrorCard(unit, err.message);
       }
     }).join('');
   }
