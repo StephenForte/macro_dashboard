@@ -556,7 +556,7 @@
     if (value === undefined || value === null) return '—';
     if (meanType === 'modal_prob') return `${(value * 100).toFixed(1)}%`;
     if (unit === '%') return `${value.toFixed(2)}%`;
-    if (unit === 'K') return `${value > 0 ? '+' : ''}${Math.round(value)}K`;
+    if (unit === 'K') return `${value > 0 ? '+' : ''}${Math.round(value).toLocaleString('en-US')}`;
     return value.toFixed(2);
   }
 
@@ -682,7 +682,7 @@
     const fmt   = unit.config.meanType === 'modal_prob'
       ? `${sign}${(delta * 100).toFixed(1)}pp`
       : unit.config.unit === 'K'
-      ? `${sign}${Math.round(delta)}K`
+      ? `${sign}${Math.round(delta).toLocaleString('en-US')}`
       : `${sign}${delta.toFixed(2)}%`;
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
@@ -762,8 +762,11 @@
         const prob = Math.max(0, cum - prev);
         const lo   = i > 0 ? Number(sorted[i - 1].fields.strike) : null;
         const hi   = Number(r.fields.strike);
+        const fmt = v => unit.config.unit === 'K'
+          ? Number(v).toLocaleString('en-US')
+          : `${v}${unit.config.unit}`;
         return {
-          label: lo === null ? `≤ ${hi}${unit.config.unit}` : `${lo}–${hi}${unit.config.unit}`,
+          label: lo === null ? `≤ ${fmt(hi)}` : `${fmt(lo)}–${fmt(hi)}`,
           prob,
         };
       });
