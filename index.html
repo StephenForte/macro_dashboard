@@ -105,6 +105,7 @@
     .badge-gdp        { background: #d1fae5; color: #065f46; }
     .badge-recession  { background: #fee2e2; color: #991b1b; }
     .badge-ff_rate    { background: #fef3c7; color: #92400e; }
+    .badge-payrolls   { background: #cffafe; color: #0e7490; }
 
     .card-title {
       font-size: 1.05rem;
@@ -161,6 +162,7 @@
     .stat-value.color-gdp         { color: #059669; }
     .stat-value.color-recession   { color: #dc2626; }
     .stat-value.color-ff_rate     { color: #d97706; }
+    .stat-value.color-payrolls    { color: #0891b2; }
 
     .stat-sub {
       font-size: 0.72rem;
@@ -269,6 +271,32 @@
       color: #cbd5e1;
       letter-spacing: 0.02em;
     }
+
+    /* ── Trading volume strip ── */
+    .card-volume {
+      padding: 10px 24px;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .vol-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    .vol-value {
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .vol-low  { color: #dc2626; }
+    .vol-mid  { color: #d97706; }
+    .vol-high { color: #16a34a; }
 
     /* ── Bars toggle ── */
     .bars-toggle {
@@ -443,6 +471,12 @@
       badgeClass: 'badge-ff_rate', colorClass: 'color-ff_rate',
       multiSeries: true,
     },
+    Payrolls: {
+      name: 'Non-Farm Payrolls', eventLabel: 'NFP Release',
+      unit: 'K', barColor: '#0891b2',
+      badgeClass: 'badge-payrolls', colorClass: 'color-payrolls',
+      multiSeries: false,
+    },
   };
 
   // Quarter labels for Recession bars, mapped by sorted-strike index.
@@ -522,7 +556,18 @@
     if (value === undefined || value === null) return '—';
     if (meanType === 'modal_prob') return `${(value * 100).toFixed(1)}%`;
     if (unit === '%') return `${value.toFixed(2)}%`;
+    if (unit === 'K') return `${value > 0 ? '+' : ''}${Math.round(value)}K`;
     return value.toFixed(2);
+  }
+
+  /** Format market_volume_usd into a display object with value string and color class. */
+  function formatVolume(v) {
+    if (v == null) return null;
+    const n = Number(v);
+    if (isNaN(n)) return null;
+    const formatted = '$' + Math.round(n).toLocaleString('en-US');
+    const cls = n < 10000 ? 'vol-low' : n < 25000 ? 'vol-mid' : 'vol-high';
+    return { formatted, cls };
   }
 
   /** Format an ISO timestamp into a readable local string. */
@@ -624,7 +669,9 @@
     const delta    = curr - prev;
     const diffH    = Math.round((new Date(currTs) - new Date(prevTs)) / 3600000);
     const ageLabel = diffH < 24 ? `${diffH}h ago` : `${Math.round(diffH / 24)}d ago`;
-    const isFlat   = Math.abs(delta) < 0.005;
+    const isFlat   = unit.config.unit === 'K'
+      ? Math.abs(delta) < 5
+      : Math.abs(delta) < 0.005;
 
     if (isFlat) {
       return `<span class="delta-badge delta-flat">→ Unchanged <span class="delta-age">vs ${ageLabel}</span></span>`;
@@ -634,6 +681,8 @@
     const sign  = delta > 0 ? '+' : '';
     const fmt   = unit.config.meanType === 'modal_prob'
       ? `${sign}${(delta * 100).toFixed(1)}pp`
+      : unit.config.unit === 'K'
+      ? `${sign}${Math.round(delta)}K`
       : `${sign}${delta.toFixed(2)}%`;
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
@@ -792,6 +841,7 @@
     const daysToEvent    = f.days_to_event;
     const contractSeries = f.contract_series || unit.contractSeries || '—';
     const noData         = !summaryRec && !contractRecs.length;
+    const vol            = formatVolume(f.market_volume_usd);
 
     // For FF_Rate multi-series, derive per-card event label from contract_series
     const eventLabel = (unit.marketType === 'FF_Rate' && unit.contractSeries)
@@ -812,6 +862,12 @@
     const chartNote = strikeStructure === 'cumulative'
       ? 'Probability distribution (derived from cumulative contracts)'
       : 'Outcome probabilities';
+
+    const volumeSection = vol ? `
+        <div class="card-volume">
+          <span class="vol-label">Trading Volume</span>
+          <span class="vol-value ${vol.cls}">${vol.formatted}</span>
+        </div>` : '';
 
     const sparklineSection = history.length >= 2 ? `
         <div class="card-sparkline">
@@ -845,6 +901,7 @@
           </div>
         </div>
 
+        ${noData ? '' : volumeSection}
         ${noData ? '' : sparklineSection}
 
         <div class="card-chart">
