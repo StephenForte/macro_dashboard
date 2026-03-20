@@ -298,6 +298,12 @@
     .vol-mid  { color: #d97706; }
     .vol-high { color: #16a34a; }
 
+    .stat-value-sm {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
     /* ── Bars toggle ── */
     .bars-toggle {
       background: none;
@@ -556,7 +562,7 @@
     if (value === undefined || value === null) return '—';
     if (meanType === 'modal_prob') return `${(value * 100).toFixed(1)}%`;
     if (unit === '%') return `${value.toFixed(2)}%`;
-    if (unit === 'K') return `${value > 0 ? '+' : ''}${Math.round(value).toLocaleString('en-US')}`;
+    if (unit === 'K') return `${value > 0 ? '+' : ''}${Math.round(value).toLocaleString('en-US')} jobs`;
     return value.toFixed(2);
   }
 
@@ -568,6 +574,24 @@
     const formatted = '$' + Math.round(n).toLocaleString('en-US');
     const cls = n < 10000 ? 'vol-low' : n < 25000 ? 'vol-mid' : 'vol-high';
     return { formatted, cls };
+  }
+
+  /** Format std_dev as ±value with inline units. */
+  function formatStdDev(value, unit) {
+    if (value == null) return null;
+    const n = Number(value);
+    if (isNaN(n)) return null;
+    if (unit === 'K') return `±${Math.round(n).toLocaleString('en-US')} jobs`;
+    if (unit === '%') return `±${n.toFixed(2)}%`;
+    return `±${n.toFixed(2)}`;
+  }
+
+  /** Format skewness as a signed number. */
+  function formatSkewness(value) {
+    if (value == null) return null;
+    const n = Number(value);
+    if (isNaN(n)) return null;
+    return `${n > 0 ? '+' : ''}${n.toFixed(2)}`;
   }
 
   /** Format an ISO timestamp into a readable local string. */
@@ -845,6 +869,8 @@
     const contractSeries = f.contract_series || unit.contractSeries || '—';
     const noData         = !summaryRec && !contractRecs.length;
     const vol            = formatVolume(f.market_volume_usd);
+    const stdDevFmt      = formatStdDev(f.std_dev, unit.config.unit);
+    const skewnessFmt    = formatSkewness(f.skewness);
 
     // For FF_Rate multi-series, derive per-card event label from contract_series
     const eventLabel = (unit.marketType === 'FF_Rate' && unit.contractSeries)
@@ -865,6 +891,20 @@
     const chartNote = strikeStructure === 'cumulative'
       ? 'Probability distribution (derived from cumulative contracts)'
       : 'Outcome probabilities';
+
+    const distStatsSection = (stdDevFmt || skewnessFmt) ? `
+        <div class="card-stats" style="border-top:none;">
+          ${stdDevFmt ? `
+          <div class="stat">
+            <span class="stat-label">Uncertainty</span>
+            <span class="stat-value stat-value-sm">${stdDevFmt}</span>
+          </div>` : ''}
+          ${skewnessFmt ? `
+          <div class="stat">
+            <span class="stat-label">Skew</span>
+            <span class="stat-value stat-value-sm">${skewnessFmt}</span>
+          </div>` : ''}
+        </div>` : '';
 
     const volumeSection = vol ? `
         <div class="card-volume">
@@ -904,6 +944,7 @@
           </div>
         </div>
 
+        ${noData ? '' : distStatsSection}
         ${noData ? '' : volumeSection}
         ${noData ? '' : sparklineSection}
 
