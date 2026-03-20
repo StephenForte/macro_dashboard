@@ -533,8 +533,10 @@
         const seriesMap = new Map();
         for (const r of forMarket) {
           const s = r.fields.contract_series;
-          const d = Number(r.fields.days_to_event) || Infinity;
-          if (s && (!seriesMap.has(s) || d < seriesMap.get(s))) seriesMap.set(s, d);
+          const d = Number(r.fields.days_to_event);
+          // Skip series whose event has already passed
+          if (!s || isNaN(d) || d <= 0) continue;
+          if (!seriesMap.has(s) || d < seriesMap.get(s)) seriesMap.set(s, d);
         }
         [...seriesMap.entries()]
           .sort((a, b) => a[1] - b[1])
