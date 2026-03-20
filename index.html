@@ -530,16 +530,18 @@
     for (const [marketType, config] of Object.entries(MARKET_CONFIG)) {
       const forMarket = summaryRecords.filter(r => r.fields.market_type === marketType);
       if (config.multiSeries) {
-        const seriesMap = new Map();
+        // Find the latest record per series, then filter out expired ones
+        const seriesLatest = new Map();
         for (const r of forMarket) {
           const s = r.fields.contract_series;
-          const d = Number(r.fields.days_to_event);
-          // Skip series whose event has already passed
-          if (!s || isNaN(d) || d <= 0) continue;
-          if (!seriesMap.has(s) || d < seriesMap.get(s)) seriesMap.set(s, d);
+          if (!s) continue;
+          if (!seriesLatest.has(s) || r.fields.timestamp > seriesLatest.get(s).fields.timestamp) {
+            seriesLatest.set(s, r);
+          }
         }
-        [...seriesMap.entries()]
-          .sort((a, b) => a[1] - b[1])
+        [...seriesLatest.entries()]
+          .filter(([, r]) => Number(r.fields.days_to_event) > 0)
+          .sort((a, b) => Number(a[1].fields.days_to_event) - Number(b[1].fields.days_to_event))
           .forEach(([series]) => units.push({ marketType, contractSeries: series, config }));
       } else {
         units.push({ marketType, contractSeries: null, config });
