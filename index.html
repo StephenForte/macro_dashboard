@@ -272,6 +272,32 @@
       letter-spacing: 0.02em;
     }
 
+    /* ── Annotation legend ── */
+    .annot-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 14px;
+      padding: 2px 0 10px;
+    }
+
+    .annot-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.66rem;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    .annot-item.annot-past { opacity: 0.45; }
+
+    .annot-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
     /* ── Trading volume strip ── */
     .card-volume {
       padding: 10px 24px;
@@ -765,27 +791,6 @@
       return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.8}" fill="${color}" opacity="${last ? 1 : 0.45}"/>`;
     }).join('');
 
-    // Annotation vertical markers (rendered behind the data line).
-    const annotSvg = annotations.map(a => {
-      const ts = new Date(a.event_date + 'T12:00:00Z').getTime();
-      if (isNaN(ts)) return '';
-      const x = toX(ts);
-      if (x < 0 || x > W) return '';
-      const aColor   = ANNOTATION_COLORS[(a.type || '').toLowerCase()] || '#94a3b8';
-      const isPast   = !!a.is_past;
-      const dash     = isPast ? '' : 'stroke-dasharray="4,3"';
-      const lineOp   = isPast ? '0.2' : '0.65';
-      const triOp    = isPast ? '0.3' : '0.9';
-      const triSize  = 4;
-      const triPath  = `M ${x.toFixed(1)},0 L ${(x - triSize / 2).toFixed(1)},${triSize} L ${(x + triSize / 2).toFixed(1)},${triSize} Z`;
-      return `<g>
-          <title>${a.label} — ${a.event_date}</title>
-          <line x1="${x.toFixed(1)}" y1="${triSize}" x2="${x.toFixed(1)}" y2="${H}"
-                stroke="${aColor}" stroke-width="1.2" ${dash} opacity="${lineOp}"/>
-          <path d="${triPath}" fill="${aColor}" opacity="${triOp}"/>
-        </g>`;
-    }).join('');
-
     return `
       <svg width="100%" height="48" viewBox="0 0 ${W} ${H}"
            preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -795,7 +800,6 @@
             <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        ${annotSvg}
         <path d="${areaPath}" fill="url(#${gradId})"/>
         <polyline points="${linePoints}" fill="none" stroke="${color}"
                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -816,6 +820,25 @@
         <span class="sparkline-axis-label">${n} reading${n !== 1 ? 's' : ''}</span>
         <span class="sparkline-axis-label">${fmt(last)}</span>
       </div>`;
+  }
+
+  /** Dot-legend of event annotations shown below the sparkline. */
+  function buildAnnotationLegendHtml(annotations) {
+    if (!annotations.length) return '';
+    const fmt = d => {
+      const dt = new Date(d + 'T12:00:00Z');
+      return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+    // Upcoming first, then past; within each group sort by date ascending.
+    const sorted = [...annotations].sort((a, b) => {
+      if (!!a.is_past !== !!b.is_past) return a.is_past ? 1 : -1;
+      return a.event_date.localeCompare(b.event_date);
+    });
+    return `<div class="annot-legend">${sorted.map(a => {
+      const color = ANNOTATION_COLORS[(a.type || '').toLowerCase()] || '#94a3b8';
+      const cls   = a.is_past ? 'annot-item annot-past' : 'annot-item';
+      return `<span class="${cls}"><span class="annot-dot" style="background:${color};"></span>${a.label} — ${fmt(a.event_date)}</span>`;
+    }).join('')}</div>`;
   }
 
   /* ────────────────────────────────────────────
@@ -964,6 +987,7 @@
           <span class="vol-value ${vol.cls}">${vol.formatted}</span>
         </div>` : '';
 
+    const annotLegend = buildAnnotationLegendHtml(annotations);
     const sparklineSection = history.length >= 2 ? `
         <div class="card-sparkline">
           <div class="sparkline-header">
@@ -971,6 +995,7 @@
           </div>
           ${sparkHtml}
           ${axisHtml}
+          ${annotLegend}
         </div>` : '';
 
     const badgeLabel = unit.marketType.replace(/_/g, ' ');
