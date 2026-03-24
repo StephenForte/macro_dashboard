@@ -488,6 +488,14 @@
   // Quarter labels for Recession bars, mapped by sorted-strike index.
   const RECESSION_QUARTERS = ['Q4 2024','Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026'];
 
+  // Event annotation colors keyed by type — consistent with market badge/bar colors.
+  const ANNOTATION_COLORS = {
+    fomc:     '#d97706',
+    cpi:      '#2563eb',
+    payrolls: '#0891b2',
+    gdp:      '#059669',
+  };
+
   /* ────────────────────────────────────────────
      Airtable fetching (handles pagination)
   ──────────────────────────────────────────── */
@@ -715,17 +723,32 @@
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
 
-  /** Mini area sparkline SVG from history. */
-  function buildSparklineHtml(history, unit) {
+  /** Mini area sparkline SVG from history, with optional event annotation markers. */
+  function buildSparklineHtml(history, unit, annotations = []) {
     if (history.length < 2) return '';
+
     const values = history.map(r => r.fields.implied_mean);
     const W = 400, H = 48, padX = 4, padY = 6;
+
+    // Time-based x-positioning so annotation dates land correctly on the axis.
+    const histTs = history.map(r => new Date(r.fields.timestamp).getTime());
+    const annotTs = annotations
+      .map(a => new Date(a.event_date + 'T12:00:00Z').getTime())
+      .filter(t => !isNaN(t));
+
+    const domainStart = histTs[0];
+    // Extend domain rightward to include any upcoming annotation dates.
+    const domainEnd = Math.max(histTs[histTs.length - 1], ...(annotTs.length ? annotTs : [0]));
+    const tsRange   = domainEnd - domainStart || 1;
+
+    const toX = ts => padX + ((ts - domainStart) / tsRange) * (W - 2 * padX);
+
     const minVal = Math.min(...values), maxVal = Math.max(...values);
     const range  = maxVal - minVal || 0.001;
-    const pts = values.map((v, i) => ({
-      x: padX + (i / (values.length - 1)) * (W - 2 * padX),
-      y: H - padY - ((v - minVal) / range) * (H - 2 * padY),
-    }));
+    const toY    = v => H - padY - ((v - minVal) / range) * (H - 2 * padY);
+
+    const pts = history.map((r, i) => ({ x: toX(histTs[i]), y: toY(values[i]) }));
+
     const linePoints = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
     const areaPath   = [
       `M ${pts[0].x.toFixed(1)},${H}`,
@@ -733,12 +756,36 @@
       pts.slice(1).map(p => `L ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
       `L ${pts[pts.length - 1].x.toFixed(1)},${H} Z`,
     ].join(' ');
+
     const color  = unit.config.barColor;
     const gradId = `grad-${unit.marketType}-${(unit.contractSeries || '').slice(-5)}`.replace(/[^a-z0-9-]/gi, '-');
+
     const dots = pts.map((p, i) => {
       const last = i === pts.length - 1;
       return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.8}" fill="${color}" opacity="${last ? 1 : 0.45}"/>`;
     }).join('');
+
+    // Annotation vertical markers (rendered behind the data line).
+    const annotSvg = annotations.map(a => {
+      const ts = new Date(a.event_date + 'T12:00:00Z').getTime();
+      if (isNaN(ts)) return '';
+      const x = toX(ts);
+      if (x < 0 || x > W) return '';
+      const aColor   = ANNOTATION_COLORS[(a.type || '').toLowerCase()] || '#94a3b8';
+      const isPast   = !!a.is_past;
+      const dash     = isPast ? '' : 'stroke-dasharray="4,3"';
+      const lineOp   = isPast ? '0.2' : '0.65';
+      const triOp    = isPast ? '0.3' : '0.9';
+      const triSize  = 4;
+      const triPath  = `M ${x.toFixed(1)},0 L ${(x - triSize / 2).toFixed(1)},${triSize} L ${(x + triSize / 2).toFixed(1)},${triSize} Z`;
+      return `<g>
+          <title>${a.label} — ${a.event_date}</title>
+          <line x1="${x.toFixed(1)}" y1="${triSize}" x2="${x.toFixed(1)}" y2="${H}"
+                stroke="${aColor}" stroke-width="1.2" ${dash} opacity="${lineOp}"/>
+          <path d="${triPath}" fill="${aColor}" opacity="${triOp}"/>
+        </g>`;
+    }).join('');
+
     return `
       <svg width="100%" height="48" viewBox="0 0 ${W} ${H}"
            preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -748,6 +795,7 @@
             <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
           </linearGradient>
         </defs>
+        ${annotSvg}
         <path d="${areaPath}" fill="url(#${gradId})"/>
         <polyline points="${linePoints}" fill="none" stroke="${color}"
                   stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -866,7 +914,7 @@
               onclick="toggleHiddenBars(this)">${toggleLabel}</button>`;
   }
 
-  function renderCard(unit, summaryRec, contractRecs, history) {
+  function renderCard(unit, summaryRec, contractRecs, history, annotations = []) {
     const f              = summaryRec ? summaryRec.fields : {};
     const impliedMean    = f.implied_mean;
     const daysToEvent    = f.days_to_event;
@@ -884,7 +932,7 @@
     const bars      = buildBars(contractRecs, unit);
     const barsHtml  = renderBarsHtml(bars, unit);
     const deltaHtml = buildDeltaHtml(history, unit);
-    const sparkHtml = buildSparklineHtml(history, unit);
+    const sparkHtml = buildSparklineHtml(history, unit, annotations);
     const axisHtml  = buildSparklineAxisHtml(history);
     const modalLabel = unit.config.meanType === 'modal_prob'
       ? getModalOutcomeLabel(contractRecs, unit)
@@ -1027,11 +1075,12 @@
     }));
     grid.innerHTML = placeholders.map(u => renderLoadingCard(u)).join('');
 
-    let summaryRecords, contractRecords;
+    let summaryRecords, contractRecords, annotationRecords;
     try {
-      [summaryRecords, contractRecords] = await Promise.all([
+      [summaryRecords, contractRecords, annotationRecords] = await Promise.all([
         fetchAllRecords('Dashboard_Summary'),
         fetchAllRecords('Contract_Details'),
+        fetchAllRecords('Event_Annotations'),
       ]);
     } catch (err) {
       console.error('Airtable fetch failed:', err);
@@ -1053,7 +1102,10 @@
         const summaryLatest   = latestForUnit(summaryRecords, unit.marketType, unit.contractSeries);
         const contractsLatest = latestForUnit(contractRecords, unit.marketType, unit.contractSeries);
         const history         = getHistory(summaryRecords, unit.marketType, unit.contractSeries);
-        return renderCard(unit, summaryLatest[0] || null, contractsLatest, history);
+        const annotations     = annotationRecords
+          .filter(r => r.fields.market_type === unit.marketType)
+          .map(r => r.fields);
+        return renderCard(unit, summaryLatest[0] || null, contractsLatest, history, annotations);
       } catch (err) {
         console.error(`Error rendering ${unit.marketType}:`, err);
         return renderErrorCard(unit, err.message);
