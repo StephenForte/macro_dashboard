@@ -749,77 +749,113 @@
     return `<span class="delta-badge ${cls}">${arrow} ${fmt} <span class="delta-age">vs ${ageLabel}</span></span>`;
   }
 
-  /** Mini area sparkline SVG from history, with optional event annotation markers. */
-  function buildSparklineHtml(history, unit, annotations = []) {
+  /**
+   * Proper mini-chart SVG: y-axis with grid lines, x-axis dates, area + line.
+   * Index-based x-positioning ensures data always fills the full width.
+   * SVG scales proportionally (no preserveAspectRatio="none") so text is readable.
+   */
+  function buildSparklineHtml(history, unit) {
     if (history.length < 2) return '';
 
     const values = history.map(r => r.fields.implied_mean);
-    const W = 400, H = 48, padX = 4, padY = 6;
-
-    // Time-based x-positioning so annotation dates land correctly on the axis.
     const histTs = history.map(r => new Date(r.fields.timestamp).getTime());
-    const annotTs = annotations
-      .map(a => new Date(a.event_date + 'T12:00:00Z').getTime())
-      .filter(t => !isNaN(t));
+    const isMod  = unit.config.meanType === 'modal_prob';
+    const n      = values.length;
 
-    const domainStart = histTs[0];
-    // Extend domain rightward to include any upcoming annotation dates.
-    const domainEnd = Math.max(histTs[histTs.length - 1], ...(annotTs.length ? annotTs : [0]));
-    const tsRange   = domainEnd - domainStart || 1;
+    // Canvas: left pad for y-axis labels, bottom pad for x-axis labels
+    const W = 500, H = 130;
+    const pL = 44, pR = 8, pT = 10, pB = 22;
+    const cW = W - pL - pR, cH = H - pT - pB;
 
-    const toX = ts => padX + ((ts - domainStart) / tsRange) * (W - 2 * padX);
+    // Index-based x (fills full width regardless of timestamp clustering)
+    const toX = i => pL + (n > 1 ? (i / (n - 1)) * cW : cW / 2);
 
-    const minVal = Math.min(...values), maxVal = Math.max(...values);
-    const range  = maxVal - minVal || 0.001;
-    const toY    = v => H - padY - ((v - minVal) / range) * (H - 2 * padY);
+    // Y with 15% padding above and below
+    const minV = Math.min(...values), maxV = Math.max(...values);
+    const vRange = maxV - minV || Math.abs(minV) * 0.1 || 0.01;
+    const yPad = vRange * 0.15;
+    const yMin = minV - yPad, yMax = maxV + yPad;
+    const toY  = v => pT + (1 - (v - yMin) / (yMax - yMin)) * cH;
 
-    const pts = history.map((r, i) => ({ x: toX(histTs[i]), y: toY(values[i]) }));
+    // Nice tick generator
+    function niceTicks(lo, hi, count = 4) {
+      const range = hi - lo;
+      const raw   = range / count;
+      const mag   = Math.pow(10, Math.floor(Math.log10(raw)));
+      const step  = [1, 2, 2.5, 5, 10].find(f => f * mag >= raw) * mag;
+      const start = Math.ceil(lo / step) * step;
+      const ticks = [];
+      for (let t = start; t <= hi + step * 0.01; t = +(t + step).toFixed(10)) {
+        if (t >= lo) ticks.push(t);
+        if (ticks.length >= count + 2) break;
+      }
+      return ticks;
+    }
+    const ticks = niceTicks(yMin, yMax);
 
-    const linePoints = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-    const areaPath   = [
-      `M ${pts[0].x.toFixed(1)},${H}`,
+    // Y-axis tick formatter
+    const fmtTick = v => {
+      if (isMod) return `${(v * 100).toFixed(0)}%`;
+      if (unit.config.unit === '%') return `${v.toFixed(vRange < 0.5 ? 2 : vRange < 5 ? 1 : 0)}%`;
+      if (unit.config.unit === 'K') return `${Math.round(v / 1000)}K`;
+      return v.toFixed(2);
+    };
+
+    // Date formatter for x-axis
+    const fmtDate = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+    // Grid lines + y-axis text
+    const gridSvg = ticks.map(t => {
+      const y = toY(t).toFixed(1);
+      return `<line x1="${pL}" y1="${y}" x2="${W - pR}" y2="${y}" stroke="#f1f5f9" stroke-width="1"/>
+  <text x="${pL - 5}" y="${y}" text-anchor="end" dominant-baseline="middle"
+        font-size="9" fill="#cbd5e1" font-family="system-ui,sans-serif">${fmtTick(t)}</text>`;
+    }).join('');
+
+    // X-axis labels: first date, reading count, last date
+    const midI  = Math.round((n - 1) / 2);
+    const xLbls = [
+      { i: 0,     text: fmtDate(histTs[0]),      anchor: 'start'  },
+      { i: midI,  text: `${n} readings`,          anchor: 'middle' },
+      { i: n - 1, text: fmtDate(histTs[n - 1]),  anchor: 'end'    },
+    ].map(({ i, text, anchor }) => {
+      const x = Math.min(Math.max(toX(i), pL), W - pR);
+      return `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="${anchor}"
+        font-size="9" fill="#cbd5e1" font-family="system-ui,sans-serif">${text}</text>`;
+    }).join('');
+
+    // Area + line
+    const pts      = values.map((v, i) => ({ x: toX(i), y: toY(v) }));
+    const linePts  = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const areaPath = [
+      `M ${pts[0].x.toFixed(1)},${pT + cH}`,
       `L ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`,
       pts.slice(1).map(p => `L ${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' '),
-      `L ${pts[pts.length - 1].x.toFixed(1)},${H} Z`,
+      `L ${pts[n - 1].x.toFixed(1)},${pT + cH} Z`,
     ].join(' ');
 
     const color  = unit.config.barColor;
-    const gradId = `grad-${unit.marketType}-${(unit.contractSeries || '').slice(-5)}`.replace(/[^a-z0-9-]/gi, '-');
-
-    const dots = pts.map((p, i) => {
-      const last = i === pts.length - 1;
-      return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.8}" fill="${color}" opacity="${last ? 1 : 0.45}"/>`;
+    const gradId = `sg-${unit.marketType}-${(unit.contractSeries || '').slice(-5)}`.replace(/[^a-z0-9-]/gi, '-');
+    const dots   = pts.map((p, i) => {
+      const last = i === n - 1;
+      return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${last ? 3 : 1.5}"
+        fill="${color}" opacity="${last ? 1 : 0.4}"/>`;
     }).join('');
 
-    return `
-      <svg width="100%" height="48" viewBox="0 0 ${W} ${H}"
-           preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stop-color="${color}" stop-opacity="0.18"/>
-            <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <path d="${areaPath}" fill="url(#${gradId})"/>
-        <polyline points="${linePoints}" fill="none" stroke="${color}"
-                  stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        ${dots}
-      </svg>`;
-  }
-
-  /** Date-range axis labels below sparkline. */
-  function buildSparklineAxisHtml(history) {
-    if (history.length < 2) return '';
-    const fmt   = ts => new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    const first = history[0].fields.timestamp;
-    const last  = history[history.length - 1].fields.timestamp;
-    const n     = history.length;
-    return `
-      <div class="sparkline-axis">
-        <span class="sparkline-axis-label">${fmt(first)}</span>
-        <span class="sparkline-axis-label">${n} reading${n !== 1 ? 's' : ''}</span>
-        <span class="sparkline-axis-label">${fmt(last)}</span>
-      </div>`;
+    return `<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="${color}" stop-opacity="0.18"/>
+          <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      ${gridSvg}
+      <path d="${areaPath}" fill="url(#${gradId})"/>
+      <polyline points="${linePts}" fill="none" stroke="${color}"
+                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+      ${xLbls}
+    </svg>`;
   }
 
   /** Dot-legend of event annotations shown below the sparkline. */
@@ -955,8 +991,7 @@
     const bars      = buildBars(contractRecs, unit);
     const barsHtml  = renderBarsHtml(bars, unit);
     const deltaHtml = buildDeltaHtml(history, unit);
-    const sparkHtml = buildSparklineHtml(history, unit, annotations);
-    const axisHtml  = buildSparklineAxisHtml(history);
+    const sparkHtml = buildSparklineHtml(history, unit);
     const modalLabel = unit.config.meanType === 'modal_prob'
       ? getModalOutcomeLabel(contractRecs, unit)
       : null;
@@ -994,7 +1029,6 @@
             <span class="chart-title">Implied mean trend</span>
           </div>
           ${sparkHtml}
-          ${axisHtml}
           ${annotLegend}
         </div>` : '';
 
