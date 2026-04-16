@@ -330,6 +330,70 @@
       letter-spacing: -0.01em;
     }
 
+    /* ── Forecast accuracy section ── */
+    .card-accuracy {
+      padding: 14px 24px 18px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .accuracy-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+    }
+
+    .accuracy-mae {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .accuracy-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .accuracy-table thead th {
+      font-size: 0.63rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #94a3b8;
+      padding-bottom: 6px;
+      text-align: right;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .accuracy-table thead th:first-child { text-align: left; }
+
+    .accuracy-table tbody td {
+      padding: 4px 0;
+      font-size: 0.74rem;
+      color: #475569;
+      text-align: right;
+      border-bottom: 1px solid #fafafa;
+    }
+
+    .accuracy-table tbody tr:last-child td { border-bottom: none; }
+
+    .acc-date {
+      text-align: left !important;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .acc-series {
+      text-align: left !important;
+      color: #94a3b8;
+      font-size: 0.65rem;
+      font-family: 'SF Mono', 'Cascadia Code', monospace;
+    }
+
+    .acc-err-pos  { color: #ef4444; font-weight: 700; } /* actual > forecast */
+    .acc-err-neg  { color: #10b981; font-weight: 700; } /* actual < forecast */
+    .acc-err-zero { color: #94a3b8; }
+
     /* ── Bars toggle ── */
     .bars-toggle {
       background: none;
@@ -878,6 +942,97 @@
   }
 
   /* ────────────────────────────────────────────
+     Forecast accuracy
+  ──────────────────────────────────────────── */
+
+  /** Render the historical accuracy table for a market. */
+  function buildAccuracyHtml(accuracyRecs, unit) {
+    if (!accuracyRecs.length) return '';
+
+    // Sort by release_date desc, show most recent 5
+    const sorted = [...accuracyRecs]
+      .sort((a, b) => b.fields.release_date.localeCompare(a.fields.release_date))
+      .slice(0, 5);
+
+    // Mean absolute error across all records
+    const absErrors = accuracyRecs.map(r => Number(r.fields.abs_error)).filter(n => !isNaN(n));
+    const mae = absErrors.length ? absErrors.reduce((s, n) => s + n, 0) / absErrors.length : null;
+
+    // Value formatter (matches market unit)
+    const fmtVal = v => {
+      const n = Number(v);
+      if (v == null || isNaN(n)) return '—';
+      if (unit.config.unit === '%') return `${n.toFixed(2)}%`;
+      if (unit.config.unit === 'K') return `${Math.round(n).toLocaleString('en-US')}`;
+      return n.toFixed(2);
+    };
+
+    // Signed error formatter
+    const fmtErr = v => {
+      const n = Number(v);
+      if (v == null || isNaN(n)) return '—';
+      const sign = n > 0 ? '+' : '';
+      if (unit.config.unit === '%') return `${sign}${n.toFixed(2)}%`;
+      if (unit.config.unit === 'K') return `${sign}${Math.round(n).toLocaleString('en-US')}`;
+      return `${sign}${n.toFixed(2)}`;
+    };
+
+    // MAE summary formatter
+    const fmtMae = v => {
+      if (v == null) return '—';
+      if (unit.config.unit === '%') return `±${v.toFixed(2)}%`;
+      if (unit.config.unit === 'K') return `±${Math.round(v).toLocaleString('en-US')}`;
+      return `±${v.toFixed(2)}`;
+    };
+
+    const fmtDate = d => {
+      try {
+        return new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', year: '2-digit',
+        });
+      } catch { return d; }
+    };
+
+    const summaryText = `${fmtMae(mae)} avg error · ${accuracyRecs.length} release${accuracyRecs.length !== 1 ? 's' : ''}`;
+    const isMulti = unit.config.multiSeries;
+
+    const rows = sorted.map(r => {
+      const f      = r.fields;
+      const err    = Number(f.error);
+      const errCls = isNaN(err) || Math.abs(err) < 0.001 ? 'acc-err-zero'
+                   : err > 0 ? 'acc-err-pos' : 'acc-err-neg';
+      return `
+        <tr>
+          <td class="acc-date">${fmtDate(f.release_date)}</td>
+          ${isMulti ? `<td class="acc-series">${f.contract_series || '—'}</td>` : ''}
+          <td>${fmtVal(f.kalshi_implied_mean)}</td>
+          <td>${fmtVal(f.actual_value)}</td>
+          <td class="${errCls}">${fmtErr(f.error)}</td>
+        </tr>`;
+    }).join('');
+
+    return `
+      <div class="card-accuracy">
+        <div class="accuracy-header">
+          <span class="chart-title">Forecast accuracy</span>
+          <span class="accuracy-mae">${summaryText}</span>
+        </div>
+        <table class="accuracy-table">
+          <thead>
+            <tr>
+              <th>Release</th>
+              ${isMulti ? '<th>Series</th>' : ''}
+              <th>Kalshi</th>
+              <th>Actual</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  /* ────────────────────────────────────────────
      Bar chart builder
   ──────────────────────────────────────────── */
   function buildBars(contractRecords, unit) {
@@ -973,7 +1128,7 @@
               onclick="toggleHiddenBars(this)">${toggleLabel}</button>`;
   }
 
-  function renderCard(unit, summaryRec, contractRecs, history, annotations = []) {
+  function renderCard(unit, summaryRec, contractRecs, history, annotations = [], accuracyRecs = []) {
     const f              = summaryRec ? summaryRec.fields : {};
     const impliedMean    = f.implied_mean;
     const daysToEvent    = f.days_to_event;
@@ -1065,6 +1220,8 @@
             ? '<p style="color:#94a3b8;font-size:0.8rem;font-style:italic;">Data collection in progress.</p>'
             : barsHtml}
         </div>
+
+        ${buildAccuracyHtml(accuracyRecs, unit)}
       </div>`;
   }
 
@@ -1134,12 +1291,13 @@
     }));
     grid.innerHTML = placeholders.map(u => renderLoadingCard(u)).join('');
 
-    let summaryRecords, contractRecords, annotationRecords;
+    let summaryRecords, contractRecords, annotationRecords, accuracyRecords;
     try {
-      [summaryRecords, contractRecords, annotationRecords] = await Promise.all([
+      [summaryRecords, contractRecords, annotationRecords, accuracyRecords] = await Promise.all([
         fetchAllRecords('Dashboard_Summary'),
         fetchAllRecords('Contract_Details'),
         fetchAllRecords('Event_Annotations'),
+        fetchAllRecords('Accuracy_Log'),
       ]);
     } catch (err) {
       console.error('Airtable fetch failed:', err);
@@ -1164,7 +1322,9 @@
         const annotations     = annotationRecords
           .filter(r => r.fields.market_type === unit.marketType)
           .map(r => r.fields);
-        return renderCard(unit, summaryLatest[0] || null, contractsLatest, history, annotations);
+        const accuracy        = accuracyRecords
+          .filter(r => r.fields.market_type === unit.marketType);
+        return renderCard(unit, summaryLatest[0] || null, contractsLatest, history, annotations, accuracy);
       } catch (err) {
         console.error(`Error rendering ${unit.marketType}:`, err);
         return renderErrorCard(unit, err.message);
