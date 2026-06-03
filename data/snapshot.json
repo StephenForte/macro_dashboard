@@ -1,22 +1,16 @@
 {
-  "generated_at": "2026-06-03T02:00:40.999714+00:00",
+  "generated_at": "2026-06-03T08:00:47.643782+00:00",
   "trend_days": 14,
   "markets": {
     "Payrolls": {
       "contract_series": "KXPAYROLLS-26MAY",
-      "latest_run": "2026-06-03T02:00:01.016574+00:00",
-      "implied_mean": 78825.0,
-      "std_dev": 60125.343,
-      "skewness": -0.6774,
-      "market_volume_usd": 382397.0,
+      "latest_run": "2026-06-03T08:00:04.863048+00:00",
+      "implied_mean": 80775.0,
+      "std_dev": 60558.5409,
+      "skewness": -0.7501,
+      "market_volume_usd": 392974.0,
       "days_to_event": 2,
       "trend": [
-        {
-          "timestamp": "2026-05-20T08:00:01.736Z",
-          "implied_mean": 66725.0,
-          "std_dev": 56282.4295,
-          "skewness": -0.4058
-        },
         {
           "timestamp": "2026-05-20T14:00:01.229Z",
           "implied_mean": 66650.0,
@@ -364,28 +358,34 @@
           "implied_mean": 78825.0,
           "std_dev": 60125.343,
           "skewness": -0.6774
+        },
+        {
+          "timestamp": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 80775.0,
+          "std_dev": 60558.5409,
+          "skewness": -0.7501
         }
       ],
       "distribution": [
         {
-          "label": "90,000k\u2013100,000k jobs",
-          "strike": 90000.0,
-          "probability": 0.25,
-          "yes_price": 0.54,
-          "volume": 0
-        },
-        {
           "label": "\u2265 150,000k jobs",
           "strike": 150000.0,
-          "probability": 0.18,
-          "yes_price": 0.18,
+          "probability": 0.17,
+          "yes_price": 0.17,
           "volume": 0
         },
         {
           "label": "125,000k\u2013150,000k jobs",
           "strike": 125000.0,
-          "probability": 0.11,
+          "probability": 0.12,
           "yes_price": 0.29,
+          "volume": 0
+        },
+        {
+          "label": "90,000k\u2013100,000k jobs",
+          "strike": 90000.0,
+          "probability": 0.09,
+          "yes_price": 0.53,
           "volume": 0
         }
       ],
@@ -449,19 +449,13 @@
       "meetings": [
         {
           "contract_series": "KXFEDDECISION-26JUN",
-          "latest_run": "2026-06-03T02:00:01.016574+00:00",
+          "latest_run": "2026-06-03T08:00:04.863048+00:00",
           "implied_mean": 0.97,
           "std_dev": null,
           "skewness": null,
-          "market_volume_usd": 14157422.0,
+          "market_volume_usd": 14241327.0,
           "days_to_event": 14,
           "trend": [
-            {
-              "timestamp": "2026-05-20T08:00:01.736Z",
-              "implied_mean": 0.97,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-05-20T14:00:01.229Z",
               "implied_mean": 0.97,
@@ -806,6 +800,12 @@
             },
             {
               "timestamp": "2026-06-03T02:00:01.016574+00:00",
+              "implied_mean": 0.97,
+              "std_dev": null,
+              "skewness": null
+            },
+            {
+              "timestamp": "2026-06-03T08:00:04.863048+00:00",
               "implied_mean": 0.97,
               "std_dev": null,
               "skewness": null
@@ -822,8 +822,8 @@
             {
               "label": "Cut 25bps",
               "strike": null,
-              "probability": 0.03,
-              "yes_price": 0.03,
+              "probability": 0.02,
+              "yes_price": 0.02,
               "volume": 0
             },
             {
@@ -837,19 +837,13 @@
         },
         {
           "contract_series": "KXFEDDECISION-26JUL",
-          "latest_run": "2026-06-03T02:00:01.016574+00:00",
-          "implied_mean": 0.91,
+          "latest_run": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 0.88,
           "std_dev": null,
           "skewness": null,
-          "market_volume_usd": 335143.0,
+          "market_volume_usd": 335409.0,
           "days_to_event": 56,
           "trend": [
-            {
-              "timestamp": "2026-05-20T08:00:01.736Z",
-              "implied_mean": 0.92,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-05-20T14:00:01.229Z",
               "implied_mean": 0.91,
@@ -1197,14 +1191,20 @@
               "implied_mean": 0.91,
               "std_dev": null,
               "skewness": null
+            },
+            {
+              "timestamp": "2026-06-03T08:00:04.863048+00:00",
+              "implied_mean": 0.88,
+              "std_dev": null,
+              "skewness": null
             }
           ],
           "distribution": [
             {
               "label": "Fed maintains rate",
               "strike": null,
-              "probability": 0.91,
-              "yes_price": 0.91,
+              "probability": 0.88,
+              "yes_price": 0.88,
               "volume": 0
             },
             {
@@ -1225,19 +1225,13 @@
         },
         {
           "contract_series": "KXFEDDECISION-26SEP",
-          "latest_run": "2026-06-03T02:00:01.016574+00:00",
+          "latest_run": "2026-06-03T08:00:04.863048+00:00",
           "implied_mean": 0.81,
           "std_dev": null,
           "skewness": null,
           "market_volume_usd": 32855.0,
           "days_to_event": 105,
           "trend": [
-            {
-              "timestamp": "2026-05-20T08:00:01.736Z",
-              "implied_mean": 0.82,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-05-20T14:00:01.229Z",
               "implied_mean": 0.71,
@@ -1582,6 +1576,12 @@
             },
             {
               "timestamp": "2026-06-03T02:00:01.016574+00:00",
+              "implied_mean": 0.81,
+              "std_dev": null,
+              "skewness": null
+            },
+            {
+              "timestamp": "2026-06-03T08:00:04.863048+00:00",
               "implied_mean": 0.81,
               "std_dev": null,
               "skewness": null
@@ -1652,19 +1652,13 @@
     },
     "GDP": {
       "contract_series": "KXGDP-26JUL30",
-      "latest_run": "2026-06-03T02:00:01.016574+00:00",
-      "implied_mean": 2.465,
-      "std_dev": 1.066,
-      "skewness": -0.5658,
-      "market_volume_usd": 78678.0,
+      "latest_run": "2026-06-03T08:00:04.863048+00:00",
+      "implied_mean": 2.48,
+      "std_dev": 1.0768,
+      "skewness": -0.5399,
+      "market_volume_usd": 78762.0,
       "days_to_event": 57,
       "trend": [
-        {
-          "timestamp": "2026-05-20T08:00:01.736Z",
-          "implied_mean": 2.31,
-          "std_dev": 1.0783,
-          "skewness": -0.3324
-        },
         {
           "timestamp": "2026-05-20T14:00:01.229Z",
           "implied_mean": 2.315,
@@ -2012,14 +2006,20 @@
           "implied_mean": 2.465,
           "std_dev": 1.066,
           "skewness": -0.5658
+        },
+        {
+          "timestamp": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 2.48,
+          "std_dev": 1.0768,
+          "skewness": -0.5399
         }
       ],
       "distribution": [
         {
           "label": "2%\u20132.5%",
           "strike": 2.0,
-          "probability": 0.31,
-          "yes_price": 0.8,
+          "probability": 0.32,
+          "yes_price": 0.81,
           "volume": 0
         },
         {
@@ -2056,831 +2056,15 @@
         }
       ]
     },
-    "Core_CPI_MoM": {
-      "contract_series": "KXCPICORE-26MAY",
-      "latest_run": "2026-06-03T02:00:01.016574+00:00",
-      "implied_mean": 0.219,
-      "std_dev": 0.201,
-      "skewness": 3.3804,
-      "market_volume_usd": 62930.0,
-      "days_to_event": 7,
-      "trend": [
-        {
-          "timestamp": "2026-05-20T08:00:01.736Z",
-          "implied_mean": 0.241,
-          "std_dev": 0.2099,
-          "skewness": 2.8713
-        },
-        {
-          "timestamp": "2026-05-20T14:00:01.229Z",
-          "implied_mean": 0.234,
-          "std_dev": 0.2073,
-          "skewness": 3.0433
-        },
-        {
-          "timestamp": "2026-05-20T20:00:01.527Z",
-          "implied_mean": 0.252,
-          "std_dev": 0.2118,
-          "skewness": 2.6296
-        },
-        {
-          "timestamp": "2026-05-21T02:00:03.528Z",
-          "implied_mean": 0.233,
-          "std_dev": 0.2104,
-          "skewness": 2.9269
-        },
-        {
-          "timestamp": "2026-05-21T08:00:02.401Z",
-          "implied_mean": 0.233,
-          "std_dev": 0.2104,
-          "skewness": 2.9269
-        },
-        {
-          "timestamp": "2026-05-21T14:00:01.821Z",
-          "implied_mean": 0.237,
-          "std_dev": 0.2102,
-          "skewness": 2.8749
-        },
-        {
-          "timestamp": "2026-05-21T20:00:04.756Z",
-          "implied_mean": 0.237,
-          "std_dev": 0.2102,
-          "skewness": 2.8749
-        },
-        {
-          "timestamp": "2026-05-22T02:00:06.111Z",
-          "implied_mean": 0.233,
-          "std_dev": 0.2099,
-          "skewness": 2.9393
-        },
-        {
-          "timestamp": "2026-05-22T08:00:05.892Z",
-          "implied_mean": 0.24,
-          "std_dev": 0.2092,
-          "skewness": 2.8889
-        },
-        {
-          "timestamp": "2026-05-22T14:00:03.467Z",
-          "implied_mean": 0.24,
-          "std_dev": 0.2092,
-          "skewness": 2.8889
-        },
-        {
-          "timestamp": "2026-05-22T20:00:04.591Z",
-          "implied_mean": 0.233,
-          "std_dev": 0.2061,
-          "skewness": 3.0976
-        },
-        {
-          "timestamp": "2026-05-23T02:00:01.200Z",
-          "implied_mean": 0.231,
-          "std_dev": 0.2064,
-          "skewness": 3.1114
-        },
-        {
-          "timestamp": "2026-05-23T08:00:02.030Z",
-          "implied_mean": 0.231,
-          "std_dev": 0.2064,
-          "skewness": 3.1114
-        },
-        {
-          "timestamp": "2026-05-23T14:00:02.059Z",
-          "implied_mean": 0.231,
-          "std_dev": 0.2064,
-          "skewness": 3.1114
-        },
-        {
-          "timestamp": "2026-05-23T20:00:04.894Z",
-          "implied_mean": 0.231,
-          "std_dev": 0.2064,
-          "skewness": 3.1114
-        },
-        {
-          "timestamp": "2026-05-24T02:00:00.875Z",
-          "implied_mean": 0.228,
-          "std_dev": 0.2039,
-          "skewness": 3.1054
-        },
-        {
-          "timestamp": "2026-05-24T08:00:00.653Z",
-          "implied_mean": 0.221,
-          "std_dev": 0.2057,
-          "skewness": 3.1184
-        },
-        {
-          "timestamp": "2026-05-24T14:00:01.141Z",
-          "implied_mean": 0.221,
-          "std_dev": 0.2057,
-          "skewness": 3.1184
-        },
-        {
-          "timestamp": "2026-05-24T20:00:05.755Z",
-          "implied_mean": 0.225,
-          "std_dev": 0.2072,
-          "skewness": 3.0031
-        },
-        {
-          "timestamp": "2026-05-25T02:00:03.937Z",
-          "implied_mean": 0.223,
-          "std_dev": 0.2055,
-          "skewness": 3.1067
-        },
-        {
-          "timestamp": "2026-05-25T08:00:02.197Z",
-          "implied_mean": 0.222,
-          "std_dev": 0.2051,
-          "skewness": 3.1362
-        },
-        {
-          "timestamp": "2026-05-25T14:00:03.245Z",
-          "implied_mean": 0.227,
-          "std_dev": 0.2055,
-          "skewness": 3.052
-        },
-        {
-          "timestamp": "2026-05-25T20:00:00.759Z",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0604
-        },
-        {
-          "timestamp": "2026-05-25T21:23:15.455041+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0604
-        },
-        {
-          "timestamp": "2026-05-25T21:28:43.202788+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0604
-        },
-        {
-          "timestamp": "2026-05-25T21:34:23.229467+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0604
-        },
-        {
-          "timestamp": "2026-05-26T02:00:01.189467+00:00",
-          "implied_mean": 0.221,
-          "std_dev": 0.2062,
-          "skewness": 3.1052
-        },
-        {
-          "timestamp": "2026-05-26T08:00:04.217706+00:00",
-          "implied_mean": 0.221,
-          "std_dev": 0.2062,
-          "skewness": 3.1052
-        },
-        {
-          "timestamp": "2026-05-26T14:00:01.497654+00:00",
-          "implied_mean": 0.22,
-          "std_dev": 0.2058,
-          "skewness": 3.1348
-        },
-        {
-          "timestamp": "2026-05-26T20:00:04.614407+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2066,
-          "skewness": 3.0139
-        },
-        {
-          "timestamp": "2026-05-27T02:00:05.353595+00:00",
-          "implied_mean": 0.221,
-          "std_dev": 0.2057,
-          "skewness": 3.1184
-        },
-        {
-          "timestamp": "2026-05-27T08:00:01.958131+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2068,
-          "skewness": 3.0313
-        },
-        {
-          "timestamp": "2026-05-27T14:00:01.069189+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2068,
-          "skewness": 3.0313
-        },
-        {
-          "timestamp": "2026-05-27T20:00:00.777200+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2068,
-          "skewness": 3.0313
-        },
-        {
-          "timestamp": "2026-05-28T02:00:04.179266+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0673
-        },
-        {
-          "timestamp": "2026-05-28T08:00:04.766284+00:00",
-          "implied_mean": 0.225,
-          "std_dev": 0.2057,
-          "skewness": 3.0758
-        },
-        {
-          "timestamp": "2026-05-28T14:00:05.636005+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2061,
-          "skewness": 3.0473
-        },
-        {
-          "timestamp": "2026-05-28T20:00:00.425820+00:00",
-          "implied_mean": 0.225,
-          "std_dev": 0.2057,
-          "skewness": 3.0758
-        },
-        {
-          "timestamp": "2026-05-29T02:00:02.670197+00:00",
-          "implied_mean": 0.225,
-          "std_dev": 0.2057,
-          "skewness": 3.0758
-        },
-        {
-          "timestamp": "2026-05-29T08:00:05.084197+00:00",
-          "implied_mean": 0.227,
-          "std_dev": 0.206,
-          "skewness": 3.0389
-        },
-        {
-          "timestamp": "2026-05-29T14:00:01.074856+00:00",
-          "implied_mean": 0.227,
-          "std_dev": 0.206,
-          "skewness": 3.0389
-        },
-        {
-          "timestamp": "2026-05-29T20:00:03.247413+00:00",
-          "implied_mean": 0.229,
-          "std_dev": 0.2047,
-          "skewness": 3.0564
-        },
-        {
-          "timestamp": "2026-05-30T02:00:02.435858+00:00",
-          "implied_mean": 0.227,
-          "std_dev": 0.205,
-          "skewness": 3.0723
-        },
-        {
-          "timestamp": "2026-05-30T08:00:01.259381+00:00",
-          "implied_mean": 0.223,
-          "std_dev": 0.205,
-          "skewness": 3.127
-        },
-        {
-          "timestamp": "2026-05-30T14:00:00.763285+00:00",
-          "implied_mean": 0.223,
-          "std_dev": 0.205,
-          "skewness": 3.127
-        },
-        {
-          "timestamp": "2026-05-30T20:00:00.612362+00:00",
-          "implied_mean": 0.223,
-          "std_dev": 0.205,
-          "skewness": 3.127
-        },
-        {
-          "timestamp": "2026-05-31T02:00:00.812212+00:00",
-          "implied_mean": 0.223,
-          "std_dev": 0.205,
-          "skewness": 3.127
-        },
-        {
-          "timestamp": "2026-05-31T08:00:00.964058+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2044,
-          "skewness": 3.1457
-        },
-        {
-          "timestamp": "2026-05-31T14:00:01.418772+00:00",
-          "implied_mean": 0.226,
-          "std_dev": 0.2056,
-          "skewness": 3.0742
-        },
-        {
-          "timestamp": "2026-05-31T20:00:01.591951+00:00",
-          "implied_mean": 0.229,
-          "std_dev": 0.2052,
-          "skewness": 3.05
-        },
-        {
-          "timestamp": "2026-06-01T02:00:05.631255+00:00",
-          "implied_mean": 0.23,
-          "std_dev": 0.2051,
-          "skewness": 3.0423
-        },
-        {
-          "timestamp": "2026-06-01T08:00:00.435070+00:00",
-          "implied_mean": 0.234,
-          "std_dev": 0.2064,
-          "skewness": 2.9339
-        },
-        {
-          "timestamp": "2026-06-01T14:00:01.532592+00:00",
-          "implied_mean": 0.231,
-          "std_dev": 0.2054,
-          "skewness": 3.0147
-        },
-        {
-          "timestamp": "2026-06-01T20:00:05.112607+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2024,
-          "skewness": 3.2236
-        },
-        {
-          "timestamp": "2026-06-02T02:00:01.395096+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2009,
-          "skewness": 3.3047
-        },
-        {
-          "timestamp": "2026-06-02T08:00:01.384066+00:00",
-          "implied_mean": 0.224,
-          "std_dev": 0.2009,
-          "skewness": 3.3047
-        },
-        {
-          "timestamp": "2026-06-02T14:00:01.758389+00:00",
-          "implied_mean": 0.225,
-          "std_dev": 0.2003,
-          "skewness": 3.3266
-        },
-        {
-          "timestamp": "2026-06-02T20:00:04.326511+00:00",
-          "implied_mean": 0.219,
-          "std_dev": 0.201,
-          "skewness": 3.3804
-        },
-        {
-          "timestamp": "2026-06-03T02:00:01.016574+00:00",
-          "implied_mean": 0.219,
-          "std_dev": 0.201,
-          "skewness": 3.3804
-        }
-      ],
-      "distribution": [
-        {
-          "label": "0.1%\u20130.2%",
-          "strike": 0.1,
-          "probability": 0.53,
-          "yes_price": 0.92,
-          "volume": 0
-        },
-        {
-          "label": "0.2%\u20130.3%",
-          "strike": 0.2,
-          "probability": 0.31,
-          "yes_price": 0.39,
-          "volume": 0
-        },
-        {
-          "label": "0.3%\u20130.4%",
-          "strike": 0.3,
-          "probability": 0.07,
-          "yes_price": 0.08,
-          "volume": 0
-        }
-      ],
-      "label": "Core CPI (MoM)",
-      "is_probability": false,
-      "annotations": [
-        {
-          "event_date": "2026-06-10",
-          "label": "CPI (May)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-07-14",
-          "label": "CPI (Jun)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-08-12",
-          "label": "CPI (Jul)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-09-11",
-          "label": "CPI (Aug)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-10-14",
-          "label": "CPI (Sep)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-11-10",
-          "label": "CPI (Oct)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        },
-        {
-          "event_date": "2026-12-10",
-          "label": "CPI (Nov)",
-          "type": "cpi",
-          "notes": "",
-          "is_past": false
-        }
-      ]
-    },
-    "Recession": {
-      "contract_series": "KXNBERRECESSQ",
-      "latest_run": "2026-06-03T02:00:01.016574+00:00",
-      "implied_mean": 0.107,
-      "std_dev": null,
-      "skewness": null,
-      "market_volume_usd": 503443.0,
-      "days_to_event": 0,
-      "trend": [
-        {
-          "timestamp": "2026-05-20T08:00:01.736Z",
-          "implied_mean": 0.032,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-20T14:00:01.229Z",
-          "implied_mean": 0.032,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-20T20:00:01.527Z",
-          "implied_mean": 0.032,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-21T02:00:03.528Z",
-          "implied_mean": 0.032,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-21T08:00:02.401Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-21T14:00:01.821Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-21T20:00:04.756Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-22T02:00:06.111Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-22T08:00:05.892Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-22T14:00:03.467Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-22T20:00:04.591Z",
-          "implied_mean": 0.034,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-23T02:00:01.200Z",
-          "implied_mean": 0.081,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-23T08:00:02.030Z",
-          "implied_mean": 0.081,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-23T14:00:02.059Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-23T20:00:04.894Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-24T02:00:00.875Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-24T08:00:00.653Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-24T14:00:01.141Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-24T20:00:05.755Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T02:00:03.937Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T08:00:02.197Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T14:00:03.245Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T20:00:00.759Z",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T21:23:15.455041+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T21:28:43.202788+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-25T21:34:23.229467+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-26T02:00:01.189467+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-26T08:00:04.217706+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-26T14:00:01.497654+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-26T20:00:04.614407+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-27T02:00:05.353595+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-27T08:00:01.958131+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-27T14:00:01.069189+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-27T20:00:00.777200+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-28T02:00:04.179266+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-28T08:00:04.766284+00:00",
-          "implied_mean": 0.109,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-28T14:00:05.636005+00:00",
-          "implied_mean": 0.088,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-28T20:00:00.425820+00:00",
-          "implied_mean": 0.088,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-29T02:00:02.670197+00:00",
-          "implied_mean": 0.088,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-29T08:00:05.084197+00:00",
-          "implied_mean": 0.082,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-29T14:00:01.074856+00:00",
-          "implied_mean": 0.079,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-29T20:00:03.247413+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-30T02:00:02.435858+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-30T08:00:01.259381+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-30T14:00:00.763285+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-30T20:00:00.612362+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-31T02:00:00.812212+00:00",
-          "implied_mean": 0.046,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-31T08:00:00.964058+00:00",
-          "implied_mean": 0.21,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-31T14:00:01.418772+00:00",
-          "implied_mean": 0.21,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-05-31T20:00:01.591951+00:00",
-          "implied_mean": 0.21,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-01T02:00:05.631255+00:00",
-          "implied_mean": 0.21,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-01T08:00:00.435070+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-01T14:00:01.532592+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-01T20:00:05.112607+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-02T02:00:01.395096+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-02T08:00:01.384066+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-02T14:00:01.758389+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-02T20:00:04.326511+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        },
-        {
-          "timestamp": "2026-06-03T02:00:01.016574+00:00",
-          "implied_mean": 0.107,
-          "std_dev": null,
-          "skewness": null
-        }
-      ],
-      "distribution": [],
-      "label": "Recession Probability",
-      "is_probability": true,
-      "annotations": []
-    },
     "CPI": {
       "contract_series": "KXCPIYOY-26MAY",
-      "latest_run": "2026-06-03T02:00:01.016574+00:00",
-      "implied_mean": 4.1965,
-      "std_dev": 0.2401,
-      "skewness": -4.8491,
-      "market_volume_usd": 432081.0,
+      "latest_run": "2026-06-03T08:00:04.863048+00:00",
+      "implied_mean": 4.1935,
+      "std_dev": 0.2409,
+      "skewness": -4.7785,
+      "market_volume_usd": 433990.0,
       "days_to_event": 7,
       "trend": [
-        {
-          "timestamp": "2026-05-20T08:00:01.736Z",
-          "implied_mean": 4.26,
-          "std_dev": 0.3125,
-          "skewness": -4.2964
-        },
         {
           "timestamp": "2026-05-20T14:00:01.229Z",
           "implied_mean": 4.26,
@@ -3228,28 +2412,34 @@
           "implied_mean": 4.1965,
           "std_dev": 0.2401,
           "skewness": -4.8491
+        },
+        {
+          "timestamp": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 4.1935,
+          "std_dev": 0.2409,
+          "skewness": -4.7785
         }
       ],
       "distribution": [
         {
           "label": "4.2%\u20134.3%",
           "strike": 4.2,
-          "probability": 0.39,
+          "probability": 0.4,
           "yes_price": 0.54,
           "volume": 0
         },
         {
           "label": "4.1%\u20134.2%",
           "strike": 4.1,
-          "probability": 0.38,
-          "yes_price": 0.92,
+          "probability": 0.37,
+          "yes_price": 0.91,
           "volume": 0
         },
         {
           "label": "4.3%\u20134.4%",
           "strike": 4.3,
-          "probability": 0.12,
-          "yes_price": 0.15,
+          "probability": 0.11,
+          "yes_price": 0.14,
           "volume": 0
         }
       ],
@@ -3306,6 +2496,816 @@
           "is_past": false
         }
       ]
+    },
+    "Core_CPI_MoM": {
+      "contract_series": "KXCPICORE-26MAY",
+      "latest_run": "2026-06-03T08:00:04.863048+00:00",
+      "implied_mean": 0.222,
+      "std_dev": 0.2007,
+      "skewness": 3.3524,
+      "market_volume_usd": 62976.0,
+      "days_to_event": 7,
+      "trend": [
+        {
+          "timestamp": "2026-05-20T14:00:01.229Z",
+          "implied_mean": 0.234,
+          "std_dev": 0.2073,
+          "skewness": 3.0433
+        },
+        {
+          "timestamp": "2026-05-20T20:00:01.527Z",
+          "implied_mean": 0.252,
+          "std_dev": 0.2118,
+          "skewness": 2.6296
+        },
+        {
+          "timestamp": "2026-05-21T02:00:03.528Z",
+          "implied_mean": 0.233,
+          "std_dev": 0.2104,
+          "skewness": 2.9269
+        },
+        {
+          "timestamp": "2026-05-21T08:00:02.401Z",
+          "implied_mean": 0.233,
+          "std_dev": 0.2104,
+          "skewness": 2.9269
+        },
+        {
+          "timestamp": "2026-05-21T14:00:01.821Z",
+          "implied_mean": 0.237,
+          "std_dev": 0.2102,
+          "skewness": 2.8749
+        },
+        {
+          "timestamp": "2026-05-21T20:00:04.756Z",
+          "implied_mean": 0.237,
+          "std_dev": 0.2102,
+          "skewness": 2.8749
+        },
+        {
+          "timestamp": "2026-05-22T02:00:06.111Z",
+          "implied_mean": 0.233,
+          "std_dev": 0.2099,
+          "skewness": 2.9393
+        },
+        {
+          "timestamp": "2026-05-22T08:00:05.892Z",
+          "implied_mean": 0.24,
+          "std_dev": 0.2092,
+          "skewness": 2.8889
+        },
+        {
+          "timestamp": "2026-05-22T14:00:03.467Z",
+          "implied_mean": 0.24,
+          "std_dev": 0.2092,
+          "skewness": 2.8889
+        },
+        {
+          "timestamp": "2026-05-22T20:00:04.591Z",
+          "implied_mean": 0.233,
+          "std_dev": 0.2061,
+          "skewness": 3.0976
+        },
+        {
+          "timestamp": "2026-05-23T02:00:01.200Z",
+          "implied_mean": 0.231,
+          "std_dev": 0.2064,
+          "skewness": 3.1114
+        },
+        {
+          "timestamp": "2026-05-23T08:00:02.030Z",
+          "implied_mean": 0.231,
+          "std_dev": 0.2064,
+          "skewness": 3.1114
+        },
+        {
+          "timestamp": "2026-05-23T14:00:02.059Z",
+          "implied_mean": 0.231,
+          "std_dev": 0.2064,
+          "skewness": 3.1114
+        },
+        {
+          "timestamp": "2026-05-23T20:00:04.894Z",
+          "implied_mean": 0.231,
+          "std_dev": 0.2064,
+          "skewness": 3.1114
+        },
+        {
+          "timestamp": "2026-05-24T02:00:00.875Z",
+          "implied_mean": 0.228,
+          "std_dev": 0.2039,
+          "skewness": 3.1054
+        },
+        {
+          "timestamp": "2026-05-24T08:00:00.653Z",
+          "implied_mean": 0.221,
+          "std_dev": 0.2057,
+          "skewness": 3.1184
+        },
+        {
+          "timestamp": "2026-05-24T14:00:01.141Z",
+          "implied_mean": 0.221,
+          "std_dev": 0.2057,
+          "skewness": 3.1184
+        },
+        {
+          "timestamp": "2026-05-24T20:00:05.755Z",
+          "implied_mean": 0.225,
+          "std_dev": 0.2072,
+          "skewness": 3.0031
+        },
+        {
+          "timestamp": "2026-05-25T02:00:03.937Z",
+          "implied_mean": 0.223,
+          "std_dev": 0.2055,
+          "skewness": 3.1067
+        },
+        {
+          "timestamp": "2026-05-25T08:00:02.197Z",
+          "implied_mean": 0.222,
+          "std_dev": 0.2051,
+          "skewness": 3.1362
+        },
+        {
+          "timestamp": "2026-05-25T14:00:03.245Z",
+          "implied_mean": 0.227,
+          "std_dev": 0.2055,
+          "skewness": 3.052
+        },
+        {
+          "timestamp": "2026-05-25T20:00:00.759Z",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0604
+        },
+        {
+          "timestamp": "2026-05-25T21:23:15.455041+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0604
+        },
+        {
+          "timestamp": "2026-05-25T21:28:43.202788+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0604
+        },
+        {
+          "timestamp": "2026-05-25T21:34:23.229467+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0604
+        },
+        {
+          "timestamp": "2026-05-26T02:00:01.189467+00:00",
+          "implied_mean": 0.221,
+          "std_dev": 0.2062,
+          "skewness": 3.1052
+        },
+        {
+          "timestamp": "2026-05-26T08:00:04.217706+00:00",
+          "implied_mean": 0.221,
+          "std_dev": 0.2062,
+          "skewness": 3.1052
+        },
+        {
+          "timestamp": "2026-05-26T14:00:01.497654+00:00",
+          "implied_mean": 0.22,
+          "std_dev": 0.2058,
+          "skewness": 3.1348
+        },
+        {
+          "timestamp": "2026-05-26T20:00:04.614407+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2066,
+          "skewness": 3.0139
+        },
+        {
+          "timestamp": "2026-05-27T02:00:05.353595+00:00",
+          "implied_mean": 0.221,
+          "std_dev": 0.2057,
+          "skewness": 3.1184
+        },
+        {
+          "timestamp": "2026-05-27T08:00:01.958131+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2068,
+          "skewness": 3.0313
+        },
+        {
+          "timestamp": "2026-05-27T14:00:01.069189+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2068,
+          "skewness": 3.0313
+        },
+        {
+          "timestamp": "2026-05-27T20:00:00.777200+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2068,
+          "skewness": 3.0313
+        },
+        {
+          "timestamp": "2026-05-28T02:00:04.179266+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0673
+        },
+        {
+          "timestamp": "2026-05-28T08:00:04.766284+00:00",
+          "implied_mean": 0.225,
+          "std_dev": 0.2057,
+          "skewness": 3.0758
+        },
+        {
+          "timestamp": "2026-05-28T14:00:05.636005+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2061,
+          "skewness": 3.0473
+        },
+        {
+          "timestamp": "2026-05-28T20:00:00.425820+00:00",
+          "implied_mean": 0.225,
+          "std_dev": 0.2057,
+          "skewness": 3.0758
+        },
+        {
+          "timestamp": "2026-05-29T02:00:02.670197+00:00",
+          "implied_mean": 0.225,
+          "std_dev": 0.2057,
+          "skewness": 3.0758
+        },
+        {
+          "timestamp": "2026-05-29T08:00:05.084197+00:00",
+          "implied_mean": 0.227,
+          "std_dev": 0.206,
+          "skewness": 3.0389
+        },
+        {
+          "timestamp": "2026-05-29T14:00:01.074856+00:00",
+          "implied_mean": 0.227,
+          "std_dev": 0.206,
+          "skewness": 3.0389
+        },
+        {
+          "timestamp": "2026-05-29T20:00:03.247413+00:00",
+          "implied_mean": 0.229,
+          "std_dev": 0.2047,
+          "skewness": 3.0564
+        },
+        {
+          "timestamp": "2026-05-30T02:00:02.435858+00:00",
+          "implied_mean": 0.227,
+          "std_dev": 0.205,
+          "skewness": 3.0723
+        },
+        {
+          "timestamp": "2026-05-30T08:00:01.259381+00:00",
+          "implied_mean": 0.223,
+          "std_dev": 0.205,
+          "skewness": 3.127
+        },
+        {
+          "timestamp": "2026-05-30T14:00:00.763285+00:00",
+          "implied_mean": 0.223,
+          "std_dev": 0.205,
+          "skewness": 3.127
+        },
+        {
+          "timestamp": "2026-05-30T20:00:00.612362+00:00",
+          "implied_mean": 0.223,
+          "std_dev": 0.205,
+          "skewness": 3.127
+        },
+        {
+          "timestamp": "2026-05-31T02:00:00.812212+00:00",
+          "implied_mean": 0.223,
+          "std_dev": 0.205,
+          "skewness": 3.127
+        },
+        {
+          "timestamp": "2026-05-31T08:00:00.964058+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2044,
+          "skewness": 3.1457
+        },
+        {
+          "timestamp": "2026-05-31T14:00:01.418772+00:00",
+          "implied_mean": 0.226,
+          "std_dev": 0.2056,
+          "skewness": 3.0742
+        },
+        {
+          "timestamp": "2026-05-31T20:00:01.591951+00:00",
+          "implied_mean": 0.229,
+          "std_dev": 0.2052,
+          "skewness": 3.05
+        },
+        {
+          "timestamp": "2026-06-01T02:00:05.631255+00:00",
+          "implied_mean": 0.23,
+          "std_dev": 0.2051,
+          "skewness": 3.0423
+        },
+        {
+          "timestamp": "2026-06-01T08:00:00.435070+00:00",
+          "implied_mean": 0.234,
+          "std_dev": 0.2064,
+          "skewness": 2.9339
+        },
+        {
+          "timestamp": "2026-06-01T14:00:01.532592+00:00",
+          "implied_mean": 0.231,
+          "std_dev": 0.2054,
+          "skewness": 3.0147
+        },
+        {
+          "timestamp": "2026-06-01T20:00:05.112607+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2024,
+          "skewness": 3.2236
+        },
+        {
+          "timestamp": "2026-06-02T02:00:01.395096+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2009,
+          "skewness": 3.3047
+        },
+        {
+          "timestamp": "2026-06-02T08:00:01.384066+00:00",
+          "implied_mean": 0.224,
+          "std_dev": 0.2009,
+          "skewness": 3.3047
+        },
+        {
+          "timestamp": "2026-06-02T14:00:01.758389+00:00",
+          "implied_mean": 0.225,
+          "std_dev": 0.2003,
+          "skewness": 3.3266
+        },
+        {
+          "timestamp": "2026-06-02T20:00:04.326511+00:00",
+          "implied_mean": 0.219,
+          "std_dev": 0.201,
+          "skewness": 3.3804
+        },
+        {
+          "timestamp": "2026-06-03T02:00:01.016574+00:00",
+          "implied_mean": 0.219,
+          "std_dev": 0.201,
+          "skewness": 3.3804
+        },
+        {
+          "timestamp": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 0.222,
+          "std_dev": 0.2007,
+          "skewness": 3.3524
+        }
+      ],
+      "distribution": [
+        {
+          "label": "0.1%\u20130.2%",
+          "strike": 0.1,
+          "probability": 0.5,
+          "yes_price": 0.92,
+          "volume": 0
+        },
+        {
+          "label": "0.2%\u20130.3%",
+          "strike": 0.2,
+          "probability": 0.34,
+          "yes_price": 0.42,
+          "volume": 0
+        },
+        {
+          "label": "0.3%\u20130.4%",
+          "strike": 0.3,
+          "probability": 0.07,
+          "yes_price": 0.08,
+          "volume": 0
+        }
+      ],
+      "label": "Core CPI (MoM)",
+      "is_probability": false,
+      "annotations": [
+        {
+          "event_date": "2026-06-10",
+          "label": "CPI (May)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-07-14",
+          "label": "CPI (Jun)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-08-12",
+          "label": "CPI (Jul)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-09-11",
+          "label": "CPI (Aug)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-10-14",
+          "label": "CPI (Sep)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-11-10",
+          "label": "CPI (Oct)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        },
+        {
+          "event_date": "2026-12-10",
+          "label": "CPI (Nov)",
+          "type": "cpi",
+          "notes": "",
+          "is_past": false
+        }
+      ]
+    },
+    "Recession": {
+      "contract_series": "KXNBERRECESSQ",
+      "latest_run": "2026-06-03T08:00:04.863048+00:00",
+      "implied_mean": 0.107,
+      "std_dev": null,
+      "skewness": null,
+      "market_volume_usd": 503443.0,
+      "days_to_event": 0,
+      "trend": [
+        {
+          "timestamp": "2026-05-20T14:00:01.229Z",
+          "implied_mean": 0.032,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-20T20:00:01.527Z",
+          "implied_mean": 0.032,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-21T02:00:03.528Z",
+          "implied_mean": 0.032,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-21T08:00:02.401Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-21T14:00:01.821Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-21T20:00:04.756Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-22T02:00:06.111Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-22T08:00:05.892Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-22T14:00:03.467Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-22T20:00:04.591Z",
+          "implied_mean": 0.034,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-23T02:00:01.200Z",
+          "implied_mean": 0.081,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-23T08:00:02.030Z",
+          "implied_mean": 0.081,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-23T14:00:02.059Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-23T20:00:04.894Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-24T02:00:00.875Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-24T08:00:00.653Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-24T14:00:01.141Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-24T20:00:05.755Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T02:00:03.937Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T08:00:02.197Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T14:00:03.245Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T20:00:00.759Z",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T21:23:15.455041+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T21:28:43.202788+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-25T21:34:23.229467+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-26T02:00:01.189467+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-26T08:00:04.217706+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-26T14:00:01.497654+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-26T20:00:04.614407+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-27T02:00:05.353595+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-27T08:00:01.958131+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-27T14:00:01.069189+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-27T20:00:00.777200+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-28T02:00:04.179266+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-28T08:00:04.766284+00:00",
+          "implied_mean": 0.109,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-28T14:00:05.636005+00:00",
+          "implied_mean": 0.088,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-28T20:00:00.425820+00:00",
+          "implied_mean": 0.088,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-29T02:00:02.670197+00:00",
+          "implied_mean": 0.088,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-29T08:00:05.084197+00:00",
+          "implied_mean": 0.082,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-29T14:00:01.074856+00:00",
+          "implied_mean": 0.079,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-29T20:00:03.247413+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-30T02:00:02.435858+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-30T08:00:01.259381+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-30T14:00:00.763285+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-30T20:00:00.612362+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-31T02:00:00.812212+00:00",
+          "implied_mean": 0.046,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-31T08:00:00.964058+00:00",
+          "implied_mean": 0.21,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-31T14:00:01.418772+00:00",
+          "implied_mean": 0.21,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-05-31T20:00:01.591951+00:00",
+          "implied_mean": 0.21,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-01T02:00:05.631255+00:00",
+          "implied_mean": 0.21,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-01T08:00:00.435070+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-01T14:00:01.532592+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-01T20:00:05.112607+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-02T02:00:01.395096+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-02T08:00:01.384066+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-02T14:00:01.758389+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-02T20:00:04.326511+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-03T02:00:01.016574+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        },
+        {
+          "timestamp": "2026-06-03T08:00:04.863048+00:00",
+          "implied_mean": 0.107,
+          "std_dev": null,
+          "skewness": null
+        }
+      ],
+      "distribution": [],
+      "label": "Recession Probability",
+      "is_probability": true,
+      "annotations": []
     }
   },
   "accuracy": {
