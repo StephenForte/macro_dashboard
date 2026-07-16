@@ -524,7 +524,9 @@
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
+        animation-delay: 0s !important;
         transition-duration: 0.01ms !important;
+        transition-delay: 0s !important;
       }
     }
 
@@ -945,9 +947,12 @@
   /** Animate distribution bars after cards mount. */
   function animateBars(root) {
     const fills = root.querySelectorAll('.bar-fill[data-width]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     requestAnimationFrame(() => {
       fills.forEach((el, i) => {
-        el.style.transitionDelay = `${80 + i * 40}ms`;
+        if (!reduceMotion) {
+          el.style.transitionDelay = `${80 + i * 40}ms`;
+        }
         el.style.width = `${el.dataset.width}%`;
       });
     });
