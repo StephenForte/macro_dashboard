@@ -1,22 +1,16 @@
 {
-  "generated_at": "2026-07-30T08:00:41.728030+00:00",
+  "generated_at": "2026-07-30T14:00:46.593118+00:00",
   "trend_days": 14,
   "markets": {
     "CPI": {
       "contract_series": "KXCPIYOY-26JUL",
-      "latest_run": "2026-07-30T08:00:05.700316+00:00",
-      "implied_mean": 3.3395,
-      "std_dev": 0.26,
-      "skewness": 5.4626,
-      "market_volume_usd": 601339.0,
-      "days_to_event": 13,
+      "latest_run": "2026-07-30T14:00:05.757365+00:00",
+      "implied_mean": 3.3605,
+      "std_dev": 0.2567,
+      "skewness": 5.3929,
+      "market_volume_usd": 671821.0,
+      "days_to_event": 12,
       "trend": [
-        {
-          "timestamp": "2026-07-16T14:00:05.111474+00:00",
-          "implied_mean": 3.4395,
-          "std_dev": 0.31,
-          "skewness": 3.2938
-        },
         {
           "timestamp": "2026-07-16T15:30:23.303833+00:00",
           "implied_mean": 3.4505,
@@ -364,28 +358,34 @@
           "implied_mean": 3.3395,
           "std_dev": 0.26,
           "skewness": 5.4626
+        },
+        {
+          "timestamp": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 3.3605,
+          "std_dev": 0.2567,
+          "skewness": 5.3929
         }
       ],
       "distribution": [
         {
-          "label": "3.2%\u20133.3%",
-          "strike": 3.2,
-          "probability": 0.33,
-          "yes_price": 0.86,
+          "label": "3.3%\u20133.4%",
+          "strike": 3.3,
+          "probability": 0.4,
+          "yes_price": 0.68,
           "volume": 0
         },
         {
-          "label": "3.3%\u20133.4%",
-          "strike": 3.3,
-          "probability": 0.29,
-          "yes_price": 0.53,
+          "label": "3.2%\u20133.3%",
+          "strike": 3.2,
+          "probability": 0.19,
+          "yes_price": 0.87,
           "volume": 0
         },
         {
           "label": "3.4%\u20133.5%",
           "strike": 3.4,
-          "probability": 0.16,
-          "yes_price": 0.24,
+          "probability": 0.19,
+          "yes_price": 0.28,
           "volume": 0
         }
       ],
@@ -431,19 +431,13 @@
     },
     "Core_CPI_MoM": {
       "contract_series": "KXCPICORE-26JUL",
-      "latest_run": "2026-07-30T08:00:05.700316+00:00",
+      "latest_run": "2026-07-30T14:00:05.757365+00:00",
       "implied_mean": 0.171,
       "std_dev": 0.1596,
       "skewness": 3.4136,
       "market_volume_usd": 25896.0,
-      "days_to_event": 13,
+      "days_to_event": 12,
       "trend": [
-        {
-          "timestamp": "2026-07-16T14:00:05.111474+00:00",
-          "implied_mean": 0.258,
-          "std_dev": 0.227,
-          "skewness": 2.2525
-        },
         {
           "timestamp": "2026-07-16T15:30:23.303833+00:00",
           "implied_mean": 0.258,
@@ -791,6 +785,12 @@
           "implied_mean": 0.171,
           "std_dev": 0.1596,
           "skewness": 3.4136
+        },
+        {
+          "timestamp": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 0.171,
+          "std_dev": 0.1596,
+          "skewness": 3.4136
         }
       ],
       "distribution": [
@@ -857,20 +857,14 @@
       ]
     },
     "GDP": {
-      "contract_series": "KXGDP-26JUL30",
-      "latest_run": "2026-07-30T08:00:05.700316+00:00",
-      "implied_mean": 1.86,
-      "std_dev": 0.5616,
-      "skewness": 0.6504,
-      "market_volume_usd": 290987.0,
-      "days_to_event": 0,
+      "contract_series": "KXGDP-26OCT30",
+      "latest_run": "2026-07-30T14:00:05.757365+00:00",
+      "implied_mean": 1.0325,
+      "std_dev": 1.7481,
+      "skewness": 0.1029,
+      "market_volume_usd": 2310.0,
+      "days_to_event": 91,
       "trend": [
-        {
-          "timestamp": "2026-07-16T14:00:05.111474+00:00",
-          "implied_mean": 1.97,
-          "std_dev": 0.9456,
-          "skewness": -0.0977
-        },
         {
           "timestamp": "2026-07-16T15:30:23.303833+00:00",
           "implied_mean": 1.985,
@@ -1218,28 +1212,34 @@
           "implied_mean": 1.86,
           "std_dev": 0.5616,
           "skewness": 0.6504
+        },
+        {
+          "timestamp": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 1.0325,
+          "std_dev": 1.7481,
+          "skewness": 0.1029
         }
       ],
       "distribution": [
         {
-          "label": "1.5%\u20132%",
-          "strike": 1.5,
-          "probability": 0.56,
-          "yes_price": 0.86,
+          "label": "1%\u20131.5%",
+          "strike": 1.0,
+          "probability": 0.34,
+          "yes_price": 0.99,
+          "volume": 0
+        },
+        {
+          "label": "2.5%\u20133%",
+          "strike": 2.5,
+          "probability": 0.32,
+          "yes_price": 0.32,
           "volume": 0
         },
         {
           "label": "2%\u20132.5%",
           "strike": 2.0,
-          "probability": 0.23,
-          "yes_price": 0.3,
-          "volume": 0
-        },
-        {
-          "label": "1%\u20131.5%",
-          "strike": 1.0,
-          "probability": 0.09,
-          "yes_price": 0.95,
+          "probability": 0.24,
+          "yes_price": 0.56,
           "volume": 0
         }
       ],
@@ -1249,19 +1249,13 @@
     },
     "Recession": {
       "contract_series": "KXNBERRECESSQ",
-      "latest_run": "2026-07-30T08:00:05.700316+00:00",
+      "latest_run": "2026-07-30T14:00:05.757365+00:00",
       "implied_mean": 0.026,
       "std_dev": null,
       "skewness": null,
       "market_volume_usd": 514685.0,
       "days_to_event": 154,
       "trend": [
-        {
-          "timestamp": "2026-07-16T14:00:05.111474+00:00",
-          "implied_mean": 0.081,
-          "std_dev": null,
-          "skewness": null
-        },
         {
           "timestamp": "2026-07-16T15:30:23.303833+00:00",
           "implied_mean": 0.02,
@@ -1609,6 +1603,12 @@
           "implied_mean": 0.026,
           "std_dev": null,
           "skewness": null
+        },
+        {
+          "timestamp": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 0.026,
+          "std_dev": null,
+          "skewness": null
         }
       ],
       "distribution": [],
@@ -1629,12 +1629,6 @@
           "market_volume_usd": 55238462.0,
           "days_to_event": 0,
           "trend": [
-            {
-              "timestamp": "2026-07-16T14:00:05.111474+00:00",
-              "implied_mean": 0.95,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-07-16T15:30:23.303833+00:00",
               "implied_mean": 0.95,
@@ -1992,19 +1986,13 @@
         },
         {
           "contract_series": "KXFEDDECISION-26SEP",
-          "latest_run": "2026-07-30T08:00:05.700316+00:00",
-          "implied_mean": 0.53,
+          "latest_run": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 0.52,
           "std_dev": null,
           "skewness": null,
-          "market_volume_usd": 1097382.0,
+          "market_volume_usd": 1193513.0,
           "days_to_event": 48,
           "trend": [
-            {
-              "timestamp": "2026-07-16T14:00:05.111474+00:00",
-              "implied_mean": 0.71,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-07-16T15:30:23.303833+00:00",
               "implied_mean": 0.7,
@@ -2352,25 +2340,31 @@
               "implied_mean": 0.53,
               "std_dev": null,
               "skewness": null
+            },
+            {
+              "timestamp": "2026-07-30T14:00:05.757365+00:00",
+              "implied_mean": 0.52,
+              "std_dev": null,
+              "skewness": null
             }
           ],
           "distribution": [
             {
               "label": "Hike 25bps",
               "strike": null,
-              "probability": 0.53,
-              "yes_price": 0.53,
+              "probability": 0.52,
+              "yes_price": 0.52,
               "volume": 0
             },
             {
               "label": "Fed maintains rate",
               "strike": null,
-              "probability": 0.43,
-              "yes_price": 0.43,
+              "probability": 0.45,
+              "yes_price": 0.45,
               "volume": 0
             },
             {
-              "label": "Cut 25bps",
+              "label": "Hike >25bps",
               "strike": null,
               "probability": 0.03,
               "yes_price": 0.03,
@@ -2380,19 +2374,13 @@
         },
         {
           "contract_series": "KXFEDDECISION-26OCT",
-          "latest_run": "2026-07-30T08:00:05.700316+00:00",
-          "implied_mean": 0.62,
+          "latest_run": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 0.67,
           "std_dev": null,
           "skewness": null,
-          "market_volume_usd": 64416.0,
+          "market_volume_usd": 65510.0,
           "days_to_event": 90,
           "trend": [
-            {
-              "timestamp": "2026-07-16T14:00:05.111474+00:00",
-              "implied_mean": 0.51,
-              "std_dev": null,
-              "skewness": null
-            },
             {
               "timestamp": "2026-07-16T15:30:23.303833+00:00",
               "implied_mean": 0.51,
@@ -2740,14 +2728,20 @@
               "implied_mean": 0.62,
               "std_dev": null,
               "skewness": null
+            },
+            {
+              "timestamp": "2026-07-30T14:00:05.757365+00:00",
+              "implied_mean": 0.67,
+              "std_dev": null,
+              "skewness": null
             }
           ],
           "distribution": [
             {
               "label": "Fed maintains rate",
               "strike": null,
-              "probability": 0.62,
-              "yes_price": 0.62,
+              "probability": 0.67,
+              "yes_price": 0.67,
               "volume": 0
             },
             {
@@ -2768,11 +2762,11 @@
         },
         {
           "contract_series": "KXFEDDECISION-26DEC",
-          "latest_run": "2026-07-30T08:00:05.700316+00:00",
-          "implied_mean": 0.58,
+          "latest_run": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 0.59,
           "std_dev": null,
           "skewness": null,
-          "market_volume_usd": 34006.0,
+          "market_volume_usd": 34773.0,
           "days_to_event": 132,
           "trend": [
             {
@@ -2792,21 +2786,27 @@
               "implied_mean": 0.58,
               "std_dev": null,
               "skewness": null
+            },
+            {
+              "timestamp": "2026-07-30T14:00:05.757365+00:00",
+              "implied_mean": 0.59,
+              "std_dev": null,
+              "skewness": null
             }
           ],
           "distribution": [
             {
               "label": "Fed maintains rate",
               "strike": null,
-              "probability": 0.58,
-              "yes_price": 0.58,
+              "probability": 0.59,
+              "yes_price": 0.59,
               "volume": 0
             },
             {
               "label": "Hike 25bps",
               "strike": null,
-              "probability": 0.4,
-              "yes_price": 0.4,
+              "probability": 0.39,
+              "yes_price": 0.39,
               "volume": 0
             },
             {
@@ -2852,19 +2852,13 @@
     },
     "Payrolls": {
       "contract_series": "KXPAYROLLS-26JUL",
-      "latest_run": "2026-07-30T08:00:05.700316+00:00",
-      "implied_mean": 74425.0,
-      "std_dev": 44723.9519,
-      "skewness": -0.7016,
-      "market_volume_usd": 109225.0,
-      "days_to_event": 8,
+      "latest_run": "2026-07-30T14:00:05.757365+00:00",
+      "implied_mean": 74675.0,
+      "std_dev": 45403.2694,
+      "skewness": -0.7763,
+      "market_volume_usd": 115233.0,
+      "days_to_event": 7,
       "trend": [
-        {
-          "timestamp": "2026-07-16T14:00:05.111474+00:00",
-          "implied_mean": 78900.0,
-          "std_dev": 42557.7842,
-          "skewness": -0.8556
-        },
         {
           "timestamp": "2026-07-16T15:30:23.303833+00:00",
           "implied_mean": 78900.0,
@@ -3212,6 +3206,12 @@
           "implied_mean": 74425.0,
           "std_dev": 44723.9519,
           "skewness": -0.7016
+        },
+        {
+          "timestamp": "2026-07-30T14:00:05.757365+00:00",
+          "implied_mean": 74675.0,
+          "std_dev": 45403.2694,
+          "skewness": -0.7763
         }
       ],
       "distribution": [
@@ -3225,8 +3225,8 @@
         {
           "label": "70,000k\u201380,000k jobs",
           "strike": 70000.0,
-          "probability": 0.13,
-          "yes_price": 0.59,
+          "probability": 0.12,
+          "yes_price": 0.6,
           "volume": 0
         },
         {
